@@ -1,0 +1,21 @@
+&pinctrl {
+    i2c0_default: i2c0_default {
+        group0 {
+            psels = <26>, <47>;
+            // psels = <27>, <26>
+        };
+    };
+
+    i2c0_sleep: i2c0_sleep {
+        group0 {
+            psels = <26>, <47>;
+            // psels = <27>, <26>;
+        };
+    };
+};
+
+&i2c0 {
+    pinctrl-0 = <&i2c0_default>;
+    pinctrl-1 = <&i2c0_sleep>;
+    pinctrl-names = "default", "sleep";
+};
