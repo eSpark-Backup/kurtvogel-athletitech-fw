@@ -4,7 +4,9 @@
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/sys/printk.h>
 
-#define I2C_NODE DT_NODELABEL(i2c0) // Use i2c1 if needed
+#define I2C_NODE0 DT_NODELABEL(i2c0) // Use i2c1 if needed
+#define I2C_NODE1 DT_NODELABEL(i2c1) 
+
 // #define CHIP_ID 0xD0
 // #define BME680_ADDR 0x76
 
@@ -15,7 +17,11 @@
 #define GYRO_REG      0x1C  // Gyroscope data register
 
 
-const struct device *i2c_dev = DEVICE_DT_GET(I2C_NODE);
+const struct device *i2c_dev = DEVICE_DT_GET(I2C_NODE0);
+const struct device *i2c_dev1 = DEVICE_DT_GET(I2C_NODE1);
+
+uint8_t addr0;
+uint8_t found_address0=0x00;
 
 uint8_t read_register(uint8_t reg) {
     uint8_t ret;
@@ -76,31 +82,63 @@ void fetch_data() {
     printk("Gyro: X=%d, Y=%d, Z=%d\n", gyro_x, gyro_y, gyro_z);
 }
 
-void main(void) {
-    
-    if (!device_is_ready(i2c_dev)) {
-        printk("I2C device not found!\n");
+
+void i2c0_icm_scanner(void){
+
+    if (!device_is_ready(i2c_dev)) {        /* i2c0 scanner for icm*/
+        printk("I2C0 ready !\n");
         return;
     }
 
-    printk("Scanning I2C bus...\n");
+    printk("Scanning I2C0 bus...\n");
 
-    uint8_t found_address=0x00;
-    uint8_t data;
+    
+    uint8_t data0;
 
-    for (uint8_t addr = 0x03; addr <= 0x77; addr++) {
+    for (addr0 = 0x03; addr0 <= 0x77; addr0++) {
         
         
-        if (i2c_read(i2c_dev, &data, 1, addr) == 0) {
-            printk("Sensor detected at 0x%X\n", addr);
-            found_address = addr;
+        if (i2c_read(i2c_dev, &data0, 1, addr0) == 0) {
+            printk("Sensor detected at 0x%X Bus:I2C0\n", addr0);
+            found_address0 = addr0;
         }
     }
+    printk("I2C0 scan complete.\n\r");
 
+}
 
-    printk("I2C scan complete.\n\r");
-        if(found_address == ICM45686_ADDR){
-            printk("Sensor found : ICM45686\n\r");
+void i2c1_scanner(void){
+
+    if (!device_is_ready(i2c_dev1)) {               
+        printk("I2C1 ready !\n");
+        return;
+    }
+
+    printk("Scanning I2C1 bus...\n");
+
+    
+    uint8_t data1;
+
+    for (uint8_t addr1= 0x03; addr1 <= 0x77; addr1++) {
+        
+        
+        if (i2c_read(i2c_dev1, &data1, 1, addr1) == 0) {
+            printk("Sensor detected at 0x%X Bus:I2C1\n", addr1);
+            
+        }
+    }
+    printk("I2C1 scan complete.\n\r");
+
+}
+
+void main(void) {
+    
+    i2c0_icm_scanner();         /* i2c0 scanner for icm*/
+    i2c1_scanner();              /* i2c1 scanner for all three sensors*/
+ 
+    
+    if(found_address0 == ICM45686_ADDR){
+            printk("ICM45686 found\n\r");
             printk("Initializing ICM45686\n\r");
 
             uint8_t who_am_i = read_register(WHO_AM_I_REG);
@@ -112,7 +150,7 @@ void main(void) {
                  }
         }
         else{
-            printk("ICM not found.... other sensor detected\n\r");
+            printk("ICM not found....\n\r");
         }
 }
 
