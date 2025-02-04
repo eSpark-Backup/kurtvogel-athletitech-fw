@@ -9,7 +9,7 @@
       "stopAtEntry": false,
       "externalConsole": true,
       "cwd": "D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware",
-      "program": "D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmwarebuild/Debug/outDebug",
+      "program": "D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
