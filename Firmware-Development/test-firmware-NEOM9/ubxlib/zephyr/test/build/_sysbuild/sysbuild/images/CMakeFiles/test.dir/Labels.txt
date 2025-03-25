@@ -1,0 +1,13 @@
+# Target labels
+ test
+# Source files and their labels
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/_sysbuild/sysbuild/images/CMakeFiles/test
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/_sysbuild/sysbuild/images/CMakeFiles/test.rule
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/_sysbuild/sysbuild/images/CMakeFiles/test-complete.rule
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/_sysbuild/sysbuild/images/test-prefix/src/test-stamp/test-build.rule
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/_sysbuild/sysbuild/images/test-prefix/src/test-stamp/test-configure.rule
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/_sysbuild/sysbuild/images/test-prefix/src/test-stamp/test-download.rule
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/_sysbuild/sysbuild/images/test-prefix/src/test-stamp/test-install.rule
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/_sysbuild/sysbuild/images/test-prefix/src/test-stamp/test-mkdir.rule
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/_sysbuild/sysbuild/images/test-prefix/src/test-stamp/test-patch.rule
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/_sysbuild/sysbuild/images/test-prefix/src/test-stamp/test-update.rule
