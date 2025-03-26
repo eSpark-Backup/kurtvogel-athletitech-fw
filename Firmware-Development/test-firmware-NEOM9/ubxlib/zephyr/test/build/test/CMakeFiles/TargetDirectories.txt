@@ -178,9 +178,15 @@ C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxl
 C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/console/CMakeFiles/drivers__console.dir
 C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/console/CMakeFiles/edit_cache.dir
 C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/console/CMakeFiles/rebuild_cache.dir
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/gnss/CMakeFiles/drivers__gnss.dir
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/gnss/CMakeFiles/edit_cache.dir
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/gnss/CMakeFiles/rebuild_cache.dir
 C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/gpio/CMakeFiles/drivers__gpio.dir
 C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/gpio/CMakeFiles/edit_cache.dir
 C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/gpio/CMakeFiles/rebuild_cache.dir
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/i2c/CMakeFiles/drivers__i2c.dir
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/i2c/CMakeFiles/edit_cache.dir
+C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/i2c/CMakeFiles/rebuild_cache.dir
 C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/pinctrl/CMakeFiles/edit_cache.dir
 C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/pinctrl/CMakeFiles/drivers__pinctrl.dir
 C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/pinctrl/CMakeFiles/rebuild_cache.dir

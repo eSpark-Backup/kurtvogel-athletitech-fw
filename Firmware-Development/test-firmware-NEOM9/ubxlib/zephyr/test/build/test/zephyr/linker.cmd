@@ -153,6 +153,7 @@ ztest :
  shell_subcmds_area : SUBALIGN(4) { _shell_subcmds_list_start = .; KEEP(*(SORT_BY_NAME(._shell_subcmds.static.*))); _shell_subcmds_list_end = .; } > FLASH
  shell_dynamic_subcmds_area : SUBALIGN(4) { _shell_dynamic_subcmds_list_start = .; KEEP(*(SORT_BY_NAME(._shell_dynamic_subcmds.static.*))); _shell_dynamic_subcmds_list_end = .; } > FLASH
  cfb_font_area : SUBALIGN(4) { _cfb_font_list_start = .; KEEP(*(SORT_BY_NAME(._cfb_font.static.*))); _cfb_font_list_end = .; } > FLASH
+ gnss_data_callback_area : SUBALIGN(4) { _gnss_data_callback_list_start = .; KEEP(*(SORT_BY_NAME(._gnss_data_callback.static.*))); _gnss_data_callback_list_end = .; } > FLASH
  tdata : ALIGN_WITH_INPUT
  {
   *(.tdata .tdata.* .gnu.linkonce.td.*);

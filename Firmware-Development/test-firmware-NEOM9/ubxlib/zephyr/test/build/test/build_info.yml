@@ -13,6 +13,7 @@ cmake:
      - C:/ncs/v2.9.1/zephyr/dts/bindings
     files:
      - C:/ncs/v2.9.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts
+     - C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/nrf52840dk_nrf52840.overlay
     include-dirs:
      - C:/ncs/v2.9.1/nrf/include
      - C:/ncs/v2.9.1/nrf/dts
@@ -30,6 +31,8 @@ cmake:
      - C:/ncs/v2.9.1/zephyr/dts/arm
      - C:/ncs/v2.9.1/zephyr/dts/arc
      - C:/ncs/v2.9.1/zephyr/dts
+    user-files:
+     - C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/nrf52840dk_nrf52840.overlay
   kconfig:
     files:
      - C:/ncs/v2.9.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig

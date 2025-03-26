@@ -1241,4 +1241,85 @@ zephyr_udc0: &usbd {
  status = "okay";
 };
 # 0 "<command-line>" 2
+# 1 "C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/nrf52840dk_nrf52840.overlay" 1
+&pinctrl {
+    icm456_default: i2c0_default {
+        group1 {
+            psels = <((((((1) * 32U) + (15)) & 0x1FFU) << 0U) | ((12U & 0xFFU) << 24U))>,
+                <((((((0) * 32U) + (26)) & 0x1FFU) << 0U) | ((11U & 0xFFU) << 24U))>;
+        };
+    };
+
+    icm456_sleep: i2c0_sleep {
+        group1 {
+            psels = <((((((1) * 32U) + (15)) & 0x1FFU) << 0U) | ((12U & 0xFFU) << 24U))>,
+                <((((((0) * 32U) + (26)) & 0x1FFU) << 0U) | ((11U & 0xFFU) << 24U))>;
+            low-power-enable;
+        };
+    };
+
+    i2c1_test_default: i2c1_default {
+  group1 {
+   psels = <((((((1) * 32U) + (10)) & 0x1FFU) << 0U) | ((12U & 0xFFU) << 24U))>,
+    <((((((1) * 32U) + (14)) & 0x1FFU) << 0U) | ((11U & 0xFFU) << 24U))>;
+
+
+  };
+ };
+
+ i2c1_test_sleep: i2c1_sleep {
+  group1 {
+   psels = <((((((1) * 32U) + (10)) & 0x1FFU) << 0U) | ((12U & 0xFFU) << 24U))>,
+    <((((((1) * 32U) + (14)) & 0x1FFU) << 0U) | ((11U & 0xFFU) << 24U))>;
+
+
+   low-power-enable;
+  };
+ };
+
+    uart0_default: uart0_default {
+  group1 {
+   psels = <((((((0) * 32U) + (12)) & 0x1FFU) << 0U) | ((0U & 0xFFU) << 24U))>,
+    <((((((0) * 32U) + (5)) & 0x1FFU) << 0U) | ((2U & 0xFFU) << 24U))>;
+  };
+  group2 {
+   psels = <((((((0) * 32U) + (11)) & 0x1FFU) << 0U) | ((1U & 0xFFU) << 24U))>,
+    <((((((0) * 32U) + (7)) & 0x1FFU) << 0U) | ((3U & 0xFFU) << 24U))>;
+   bias-pull-up;
+  };
+ };
+
+ uart0_sleep: uart0_sleep {
+  group1 {
+   psels = <((((((0) * 32U) + (12)) & 0x1FFU) << 0U) | ((0U & 0xFFU) << 24U))>,
+    <((((((0) * 32U) + (11)) & 0x1FFU) << 0U) | ((1U & 0xFFU) << 24U))>,
+    <((((((0) * 32U) + (5)) & 0x1FFU) << 0U) | ((2U & 0xFFU) << 24U))>,
+    <((((((0) * 32U) + (7)) & 0x1FFU) << 0U) | ((3U & 0xFFU) << 24U))>;
+   low-power-enable;
+  };
+    };
+};
+
+&i2c0 {
+    pinctrl-0 = <&icm456_default>;
+    pinctrl-1 = <&icm456_sleep>;
+    pinctrl-names = "default", "sleep";
+};
+
+&i2c1 {
+    status = "okay";
+ pinctrl-0 = <&i2c1_test_default>;
+ pinctrl-1 = <&i2c1_test_sleep>;
+ pinctrl-names = "default", "sleep";
+};
+
+&uart0 {
+ compatible = "nordic,nrf-uarte";
+ status = "okay";
+ current-speed = <115200>;
+ pinctrl-0 = <&uart0_default>;
+ pinctrl-1 = <&uart0_sleep>;
+ pinctrl-names = "default", "sleep";
+};
+# 0 "<command-line>" 2
 # 1 "C:/ncs/v2.9.1/zephyr/misc/empty_file.c"

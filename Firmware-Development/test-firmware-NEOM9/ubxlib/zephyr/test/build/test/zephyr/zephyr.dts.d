@@ -28,4 +28,5 @@ empty_file.o: C:/ncs/v2.9.1/zephyr/misc/empty_file.c \
  C:/ncs/v2.9.1/zephyr/include/zephyr/dt-bindings/adc/nrf-saadc.h \
  C:/ncs/v2.9.1/zephyr/include/zephyr/dt-bindings/regulator/nrf5x.h \
  C:/ncs/v2.9.1/zephyr/dts/common/nordic/nrf52840_partition.dtsi \
- C:/ncs/v2.9.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840-pinctrl.dtsi
+ C:/ncs/v2.9.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840-pinctrl.dtsi \
+ C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/nrf52840dk_nrf52840.overlay

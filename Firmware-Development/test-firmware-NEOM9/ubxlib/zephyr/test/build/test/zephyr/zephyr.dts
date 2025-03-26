@@ -151,8 +151,8 @@
 			easydma-maxcnt-bits = < 0x10 >;
 			status = "okay";
 			zephyr,pm-device-runtime-auto;
-			pinctrl-0 = < &i2c0_default >;
-			pinctrl-1 = < &i2c0_sleep >;
+			pinctrl-0 = < &icm456_default >;
+			pinctrl-1 = < &icm456_sleep >;
 			pinctrl-names = "default", "sleep";
 		};
 		spi0: spi@40003000 {
@@ -175,10 +175,10 @@
 			reg = < 0x40004000 0x1000 >;
 			interrupts = < 0x4 0x1 >;
 			easydma-maxcnt-bits = < 0x10 >;
-			status = "disabled";
+			status = "okay";
 			zephyr,pm-device-runtime-auto;
-			pinctrl-0 = < &i2c1_default >;
-			pinctrl-1 = < &i2c1_sleep >;
+			pinctrl-0 = < &i2c1_test_default >;
+			pinctrl-1 = < &i2c1_test_sleep >;
 			pinctrl-names = "default", "sleep";
 		};
 		spi1: spi@40004000 {
@@ -575,17 +575,17 @@
 		uart0_default: uart0_default {
 			phandle = < 0x2 >;
 			group1 {
-				psels = < 0x6 >, < 0x2000005 >;
+				psels = < 0xc >, < 0x2000005 >;
 			};
 			group2 {
-				psels = < 0x1000008 >, < 0x3000007 >;
+				psels = < 0x100000b >, < 0x3000007 >;
 				bias-pull-up;
 			};
 		};
 		uart0_sleep: uart0_sleep {
 			phandle = < 0x3 >;
 			group1 {
-				psels = < 0x6 >, < 0x1000008 >, < 0x2000005 >, < 0x3000007 >;
+				psels = < 0xc >, < 0x100000b >, < 0x2000005 >, < 0x3000007 >;
 				low-power-enable;
 			};
 		};
@@ -606,29 +606,29 @@
 				low-power-enable;
 			};
 		};
-		i2c0_default: i2c0_default {
+		i2c0_default: icm456_default: i2c0_default {
 			phandle = < 0x4 >;
 			group1 {
-				psels = < 0xc00001a >, < 0xb00001b >;
+				psels = < 0xc00002f >, < 0xb00001a >;
 			};
 		};
-		i2c0_sleep: i2c0_sleep {
+		i2c0_sleep: icm456_sleep: i2c0_sleep {
 			phandle = < 0x5 >;
 			group1 {
-				psels = < 0xc00001a >, < 0xb00001b >;
+				psels = < 0xc00002f >, < 0xb00001a >;
 				low-power-enable;
 			};
 		};
-		i2c1_default: i2c1_default {
+		i2c1_default: i2c1_test_default: i2c1_default {
 			phandle = < 0x8 >;
 			group1 {
-				psels = < 0xc00001e >, < 0xb00001f >;
+				psels = < 0xc00002a >, < 0xb00002e >;
 			};
 		};
-		i2c1_sleep: i2c1_sleep {
+		i2c1_sleep: i2c1_test_sleep: i2c1_sleep {
 			phandle = < 0x9 >;
 			group1 {
-				psels = < 0xc00001e >, < 0xb00001f >;
+				psels = < 0xc00002a >, < 0xb00002e >;
 				low-power-enable;
 			};
 		};
