@@ -48,8 +48,8 @@ extern "C" {
 /** The u-blox device handle; this is intended to be anonymous,
  * the contents should never be referenced by the application.
  */
-typedef void *uDeviceHandle_t;
 
+typedef void *uDeviceHandle_t;
 #ifdef __cplusplus
 }
 #endif

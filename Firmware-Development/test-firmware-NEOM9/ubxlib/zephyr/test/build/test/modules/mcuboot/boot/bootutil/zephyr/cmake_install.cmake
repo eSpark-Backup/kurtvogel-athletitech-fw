@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/bootloader/mcuboot/boot/bootutil/zephyr
+# Install script for directory: C:/ncs/v2.9.0/bootloader/mcuboot/boot/bootutil/zephyr
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

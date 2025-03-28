@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/zephyr/subsys/storage
+# Install script for directory: C:/ncs/v2.9.0/zephyr/subsys/storage
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

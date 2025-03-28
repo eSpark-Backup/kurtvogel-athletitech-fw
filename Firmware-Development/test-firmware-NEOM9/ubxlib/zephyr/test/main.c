@@ -6,6 +6,11 @@
  * code runs is made at build time, see the README.md for
  * instructions.
  */
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/i2c.h>
+#include <zephyr/sys/printk.h>
 
  #define U_CFG_DISABLE_TEST_AUTOMATION 0
 
@@ -290,6 +295,7 @@
  
      // Open the device
      returnCode = uDeviceOpen(&gDeviceCfg, &devHandle);
+     printk("[ main ] returnCode : %d\n\r" , returnCode);
      uPortLog("Opened device with return code %d.\n", returnCode);
  
      if (returnCode == 0) {

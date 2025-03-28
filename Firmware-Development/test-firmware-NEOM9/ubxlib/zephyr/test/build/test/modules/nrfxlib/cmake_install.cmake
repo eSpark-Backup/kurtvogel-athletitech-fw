@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/nrf/modules/nrfxlib
+# Install script for directory: C:/ncs/v2.9.0/nrf/modules/nrfxlib
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,8 +39,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrfxlib/nrfxlib/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrfxlib/nrf_802154/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrfxlib/nrfxlib/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrfxlib/nrf_802154/cmake_install.cmake")
 
 endif()
 

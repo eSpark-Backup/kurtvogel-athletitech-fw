@@ -6,7 +6,7 @@
  * alternatively user defined BUILD_VERSION.
  */
 
-#define NCS_COMMIT                   60d0d6c8d42d
-#define NCS_COMMIT_STRING            "60d0d6c8d42d"
+#define NCS_COMMIT                   7787b2649840
+#define NCS_COMMIT_STRING            "7787b2649840"
 
 #endif /* _NCS_COMMIT_H_ */

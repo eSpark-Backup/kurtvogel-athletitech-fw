@@ -23,7 +23,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = C:\ncs\toolchains\b620d30767\opt\bin\cmake.exe --regenerate-during-build -SC:\ncs\v2.9.1\zephyr\share\sysbuild -BC:\GitHub\kurtvogel-athletitech-fw\Firmware-Development\test-firmware-NEOM9\ubxlib\zephyr\test\build
+  command = C:\ncs\toolchains\b620d30767\opt\bin\cmake.exe --regenerate-during-build -SC:\ncs\v2.9.0\zephyr\share\sysbuild -BD:\GitHub\kurtvogel-athletitech-fw\Firmware-Development\test-firmware-NEOM9\ubxlib\zephyr\test\build
   description = Re-running CMake...
   generator = 1
 

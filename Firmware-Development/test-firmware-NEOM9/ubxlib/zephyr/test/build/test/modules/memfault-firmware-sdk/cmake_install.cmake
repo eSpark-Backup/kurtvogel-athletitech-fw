@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/modules/lib/memfault-firmware-sdk/ports/zephyr
+# Install script for directory: C:/ncs/v2.9.0/modules/lib/memfault-firmware-sdk/ports/zephyr
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

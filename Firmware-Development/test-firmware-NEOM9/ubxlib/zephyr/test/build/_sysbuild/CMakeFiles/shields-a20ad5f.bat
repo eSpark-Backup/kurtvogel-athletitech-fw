@@ -1,5 +1,5 @@
 @echo off
-cd /D C:\GitHub\kurtvogel-athletitech-fw\Firmware-Development\test-firmware-NEOM9\ubxlib\zephyr\test\build\_sysbuild || (set FAIL_LINE=2& goto :ABORT)
+cd /D D:\GitHub\kurtvogel-athletitech-fw\Firmware-Development\test-firmware-NEOM9\ubxlib\zephyr\test\build\_sysbuild || (set FAIL_LINE=2& goto :ABORT)
 C:\ncs\toolchains\b620d30767\opt\bin\cmake.exe -E echo adafruit_2_8_tft_touch_v2 || (set FAIL_LINE=3& goto :ABORT)
 C:\ncs\toolchains\b620d30767\opt\bin\cmake.exe -E echo adafruit_2_8_tft_touch_v2_nano || (set FAIL_LINE=4& goto :ABORT)
 C:\ncs\toolchains\b620d30767\opt\bin\cmake.exe -E echo adafruit_can_picowbell || (set FAIL_LINE=5& goto :ABORT)

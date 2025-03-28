@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/zephyr/boards/nordic/nrf52840dk
+# Install script for directory: C:/ncs/v2.9.0/zephyr/boards/nordic/nrf52840dk
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

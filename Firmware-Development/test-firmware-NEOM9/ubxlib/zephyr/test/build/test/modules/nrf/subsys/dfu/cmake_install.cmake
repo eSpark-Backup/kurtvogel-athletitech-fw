@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/nrf/subsys/dfu
+# Install script for directory: C:/ncs/v2.9.0/nrf/subsys/dfu
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

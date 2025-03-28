@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/zephyr/drivers
+# Install script for directory: C:/ncs/v2.9.0/zephyr/drivers
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,21 +39,21 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/disk/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/firmware/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/interrupt_controller/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/misc/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/pcie/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/usb/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/usb_c/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/clock_control/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/console/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/gnss/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/gpio/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/i2c/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/pinctrl/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/serial/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/timer/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/disk/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/firmware/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/interrupt_controller/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/misc/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/pcie/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/usb/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/usb_c/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/clock_control/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/console/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/gnss/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/gpio/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/i2c/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/pinctrl/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/serial/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/zephyr/drivers/timer/cmake_install.cmake")
 
 endif()
 

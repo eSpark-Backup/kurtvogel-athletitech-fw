@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/zephyr/cmake/reports
+# Install script for directory: C:/ncs/v2.9.0/zephyr/cmake/reports
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

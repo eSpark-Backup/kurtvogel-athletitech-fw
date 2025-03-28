@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/nrf
+# Install script for directory: C:/ncs/v2.9.0/nrf
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,13 +39,13 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/ext/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/lib/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/samples/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/subsys/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/modules/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/drivers/cmake_install.cmake")
-  include("C:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/tests/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/ext/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/lib/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/samples/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/subsys/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/modules/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/drivers/cmake_install.cmake")
+  include("D:/GitHub/kurtvogel-athletitech-fw/Firmware-Development/test-firmware-NEOM9/ubxlib/zephyr/test/build/test/modules/nrf/tests/cmake_install.cmake")
 
 endif()
 

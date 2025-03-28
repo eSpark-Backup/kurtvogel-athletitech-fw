@@ -269,11 +269,13 @@ int32_t uDeviceOpen(const uDeviceCfg_t *pDeviceCfg, uDeviceHandle_t *pDeviceHand
     int32_t errorCode = uDeviceLock();
 
     uDeviceHandle_t deviceHandleCandidate = NULL;
+    printk("[ uDeviceOpen ] phase 1 passed errorcode :%d \n\r" ,errorCode);
 
     if (errorCode == 0 && pDeviceCfg != NULL) {
         errorCode = uDeviceCallback("open", (void *)pDeviceCfg->deviceType, NULL);
         localDeviceCfg = *pDeviceCfg;
     }
+    printk("[ uDeviceOpen ] phase 2 passed errorcode :%d \n\r" ,errorCode);
 
     if (errorCode == 0) {
         // Allow the device configuration from the board
@@ -281,19 +283,25 @@ int32_t uDeviceOpen(const uDeviceCfg_t *pDeviceCfg, uDeviceHandle_t *pDeviceHand
         // we were given; only used by Zephyr
         errorCode = uPortBoardCfgDevice(&localDeviceCfg);
     }
+    printk("[ uDeviceOpen ] phase 3 passed errorcode :%d \n\r" ,errorCode);
 
     if (errorCode == 0) {
         errorCode = (int32_t) U_ERROR_COMMON_INVALID_PARAMETER;
         if ((pDeviceHandle != NULL) && (localDeviceCfg.version == 0)) {
             switch (localDeviceCfg.deviceType) {
                 case U_DEVICE_TYPE_CELL:
+
                     errorCode = uDevicePrivateCellAdd(&localDeviceCfg, &deviceHandleCandidate);
                     if (errorCode == 0) {
                         U_DEVICE_INSTANCE(deviceHandleCandidate)->moduleType = localDeviceCfg.deviceCfg.cfgCell.moduleType;
                     }
                     break;
                 case U_DEVICE_TYPE_GNSS:
+                    printk("[ U_DEVICE_TYPE_GNSS ]  errorcode :%d \n\r" ,errorCode);                   
+
                     errorCode = uDevicePrivateGnssAdd(&localDeviceCfg, &deviceHandleCandidate);
+                    printk("[ U_DEVICE_TYPE_GNSS ]  errorcode :%d \n\r" ,errorCode);                   
+
                     if (errorCode == 0) {
                         U_DEVICE_INSTANCE(deviceHandleCandidate)->moduleType = localDeviceCfg.deviceCfg.cfgGnss.moduleType;
                     }
@@ -317,6 +325,7 @@ int32_t uDeviceOpen(const uDeviceCfg_t *pDeviceCfg, uDeviceHandle_t *pDeviceHand
                 U_DEVICE_INSTANCE(deviceHandleCandidate)->pCfgName = localDeviceCfg.pCfgName;
             }
         }
+        printk("[ uDeviceOpen ] phase 5 passed errorcode :%d \n\r" ,errorCode);
 
         // ...and done
         uDeviceUnlock();

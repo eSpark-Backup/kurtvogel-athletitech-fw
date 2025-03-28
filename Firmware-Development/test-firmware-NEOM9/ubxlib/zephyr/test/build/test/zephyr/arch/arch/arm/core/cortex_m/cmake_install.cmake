@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/zephyr/arch/arm/core/cortex_m
+# Install script for directory: C:/ncs/v2.9.0/zephyr/arch/arm/core/cortex_m
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

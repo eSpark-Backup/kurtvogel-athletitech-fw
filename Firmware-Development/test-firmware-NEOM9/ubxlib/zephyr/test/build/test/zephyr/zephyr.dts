@@ -575,17 +575,17 @@
 		uart0_default: uart0_default {
 			phandle = < 0x2 >;
 			group1 {
-				psels = < 0xc >, < 0x2000005 >;
+				psels = < 0x6 >, < 0x2000005 >;
 			};
 			group2 {
-				psels = < 0x100000b >, < 0x3000007 >;
+				psels = < 0x1000008 >, < 0x3000007 >;
 				bias-pull-up;
 			};
 		};
 		uart0_sleep: uart0_sleep {
 			phandle = < 0x3 >;
 			group1 {
-				psels = < 0xc >, < 0x100000b >, < 0x2000005 >, < 0x3000007 >;
+				psels = < 0x6 >, < 0x1000008 >, < 0x2000005 >, < 0x3000007 >;
 				low-power-enable;
 			};
 		};
@@ -622,13 +622,13 @@
 		i2c1_default: i2c1_test_default: i2c1_default {
 			phandle = < 0x8 >;
 			group1 {
-				psels = < 0xc00002a >, < 0xb00002e >;
+				psels = < 0xc00002f >, < 0xb00001a >;
 			};
 		};
 		i2c1_sleep: i2c1_test_sleep: i2c1_sleep {
 			phandle = < 0x9 >;
 			group1 {
-				psels = < 0xc00002a >, < 0xb00002e >;
+				psels = < 0xc00002f >, < 0xb00001a >;
 				low-power-enable;
 			};
 		};

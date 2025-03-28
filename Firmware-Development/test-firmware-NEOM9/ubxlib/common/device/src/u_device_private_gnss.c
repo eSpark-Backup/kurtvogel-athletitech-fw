@@ -276,7 +276,7 @@ int32_t uDevicePrivateGnssAdd(const uDeviceCfg_t *pDevCfg,
 
                             for (int32_t i = ((sizeof(baudRates) / sizeof(baudRates[0])) - 1); i >= 0; --i) {
                                 errorCode = uPortUartOpen(pCfgUart->uart,
-                                                          baudRates[i], NULL,
+                                                          baudRates[i], NULL,                                                                                                                                                           
                                                           U_GNSS_UART_BUFFER_LENGTH_BYTES,
                                                           pCfgUart->pinTxd,
                                                           pCfgUart->pinRxd,
@@ -319,6 +319,8 @@ int32_t uDevicePrivateGnssAdd(const uDeviceCfg_t *pDevCfg,
                         }
                         break;
                     case U_DEVICE_TRANSPORT_TYPE_I2C:
+                    printk("[ uDevicePrivateGnssAdd ]  errorcode :%d \n\r" ,errorCode);                   
+
                         pCfgI2c = &(pDevCfg->transportCfg.cfgI2c);
                         // Open the I2C instance.
                         errorCode = uDevicePrivateI2cOpen(pCfgI2c);

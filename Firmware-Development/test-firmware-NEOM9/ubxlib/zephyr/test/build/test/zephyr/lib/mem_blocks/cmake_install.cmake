@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/zephyr/lib/mem_blocks
+# Install script for directory: C:/ncs/v2.9.0/zephyr/lib/mem_blocks
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

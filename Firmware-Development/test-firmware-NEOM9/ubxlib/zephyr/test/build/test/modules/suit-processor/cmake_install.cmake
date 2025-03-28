@@ -1,4 +1,4 @@
-# Install script for directory: C:/ncs/v2.9.1/modules/lib/suit-processor/ncs
+# Install script for directory: C:/ncs/v2.9.0/modules/lib/suit-processor/ncs
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
