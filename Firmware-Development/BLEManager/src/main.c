@@ -5,25 +5,29 @@
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/hci.h>
 
-static struct bt_conn *current_conn = NULL;
+static struct bt_conn *currentConnection = NULL;
 static bool imuNotifyEnabled = false;
 static bool magnetoNotifyEnabled = false;
 static bool gnssNotifyEnabled = false;
 
 // Structure to hold IMU data
-struct imuData {
-    int16_t timestamp;
-    int16_t accel_x;
+typedef struct  {
+
+    uint32_t timeStamp ;
+    int16_t accel_x ;
     int16_t accel_y;
-    int16_t accel_z;
-    int16_t gyro_x;
-    int16_t gyro_y;
-    int16_t gyro_z;
-};
+    int16_t accel_z ;
+    int16_t gyro_x ;
+    int16_t gyro_y ;
+    int16_t gyro_z ;
+    int16_t odometer ;
+
+}ImuData;
 
 // Structure to hold Magnetometer data
-struct magnetoData {
-    int16_t timestamp;
+typedef struct  {
+
+    uint32_t timeStamp;
     int16_t mag_x;
     int16_t mag_y;
     int16_t mag_z;
@@ -31,40 +35,57 @@ struct magnetoData {
     int16_t euler_y;
     int16_t euler_z;
     int16_t temperature;
-};
+    
+}MagnetoData;
 
 // Structure to hold GNSS data
-struct gnssData {
-    int16_t timestamp;
+typedef struct  {
+
+    uint32_t timeStamp;
+    int32_t timeUTC;
     int16_t altitude;
     int16_t latitude;
     int16_t longitude;
-    int16_t velocity;
     int16_t acceleration;
-    int16_t odometer;
+    int16_t velocity;
     int16_t svs;
-    int32_t time_utc;
-};
+
+}GnssData;
 
 // Create instances of the structures
-static struct imuData imu = {
-    .accel_x = 1, .accel_y = 2, .accel_z = 3,
-    .gyro_x = 4, .gyro_y = 5, .gyro_z = 6,
-    .timestamp = 999
+ImuData imu = {
+    .accel_x = 1,
+    .accel_y = 2, 
+    .accel_z = 3,
+    .gyro_x = 4,
+    .gyro_y = 5,
+    .gyro_z = 6,
+    .timeStamp = 999,
+    .odometer = 6
 };
 
-static struct magnetoData magneto = {
-    .mag_x = 1, .mag_y = 2, .mag_z = 3,
-    .euler_x = 4, .euler_y = 5, .euler_z = 6,
-    .temperature = 7, .timestamp = 999
+
+
+MagnetoData magneto = {
+    .mag_x = 1, 
+    .mag_y = 2, 
+    .mag_z = 3,
+    .euler_x = 4, 
+    .euler_y = 5, 
+    .euler_z = 6,
+    .temperature = 7, 
+    .timeStamp = 999
 };
 
-static struct gnssData gnss = {
-    .altitude = 1, .latitude = 2, .longitude = 3,
-    .velocity = 4, .acceleration = 5, .odometer = 6,
+GnssData gnss = {
+    .altitude = 1,
+    .latitude = 2,
+    .longitude = 3,
+    .velocity = 4, 
+    .acceleration = 5,
     .svs = 7, 
-    .time_utc = 8,
-    .timestamp = 999
+    .timeUTC = 8,
+    .timeStamp = 999
 };
 
 // Read callback functions for the characteristics
@@ -113,15 +134,15 @@ static void connected(struct bt_conn *conn, uint8_t err)
         return;
     }
     printk("Connected\n");
-    current_conn = bt_conn_ref(conn); // Store connection reference
+    currentConnection = bt_conn_ref(conn); // Store connection reference
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
     printk("Disconnected (reason %d)\n", reason);
-    if (current_conn) {
-        bt_conn_unref(current_conn);
-        current_conn = NULL;
+    if (currentConnection) {
+        bt_conn_unref(currentConnection);
+        currentConnection = NULL;
     }
     imuNotifyEnabled = false;
     magnetoNotifyEnabled = false;
@@ -136,24 +157,24 @@ static struct bt_conn_cb conn_callbacks = {
 
 // Define the BLE Service
 BT_GATT_SERVICE_DEFINE(dataTransferService,
-    BT_GATT_PRIMARY_SERVICE(BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0x12345678, 0x1234, 0x5678, 0x1234, 0x56789ABCDEF0))),
+    BT_GATT_PRIMARY_SERVICE(BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xc43a8e28, 0x59a1, 0x4c5b, 0x9ec4, 0xff8fc845b179))),
 
     // IMU Characteristic - Read + Notify
-    BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xABCDEF01, 0x1234, 0x5678, 0x1234, 0x56789ABCDEF0)),
+    BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0x7c2b0f38, 0x4993, 0x4c6a, 0x9458, 0xff8fc845b179)),
                            BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
                            BT_GATT_PERM_READ,
                            readImu, NULL, &imu),
     BT_GATT_CCC(imuCccCfgChanged, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 
     // Magnetometer Characteristic - Read + Notify
-    BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xABCDEF02, 0x1234, 0x5678, 0x1234, 0x56789ABCDEF0)),
+    BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0x1a4c5e87, 0x60f1, 0x4b14, 0x8a9e, 0xe71c8f0d5e30)),
                            BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
                            BT_GATT_PERM_READ,
                            readMagneto, NULL, &magneto),
     BT_GATT_CCC(magnetoCccCfgChanged, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 
     // GNSS Characteristic - Read + Notify
-    BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xABCDEF03, 0x1234, 0x5678, 0x1234, 0x56789ABCDEF0)),
+    BT_GATT_CHARACTERISTIC(BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xf8a1d2e0, 0x86d1, 0x41e6, 0xb489, 0xcae4c5fd5b11)),
                            BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
                            BT_GATT_PERM_READ,
                            readGnss, NULL, &gnss),
@@ -163,20 +184,22 @@ BT_GATT_SERVICE_DEFINE(dataTransferService,
 // Notify function
 void notifySensorData(void)
 {
-    if (!current_conn) {
+    if (!currentConnection) {
         printk("No active connection\n");
         return;
     }
 
-    // Update timestamps
+    // Update timeStamps
     uint32_t current_time = k_uptime_get_32();
-    imu.timestamp = current_time;
-    magneto.timestamp = current_time;
-    gnss.timestamp = current_time;
+
+    printk("[notifySensorData] current_time : %d\n\r" , current_time);
+    imu.timeStamp = current_time;
+    magneto.timeStamp = current_time;
+    gnss.timeStamp = current_time;
 
     // Send notifications for each characteristic if enabled
     if (imuNotifyEnabled) {
-        int err = bt_gatt_notify(current_conn, &dataTransferService.attrs[2], &imu, sizeof(imu));
+        int err = bt_gatt_notify(currentConnection, &dataTransferService.attrs[2], &imu, sizeof(imu));
         if (err) {
             printk("IMU Notification failed (err %d)\n", err);
         } else {
@@ -185,7 +208,7 @@ void notifySensorData(void)
     }
     
     if (magnetoNotifyEnabled) {
-        int err = bt_gatt_notify(current_conn, &dataTransferService.attrs[5], &magneto, sizeof(magneto));
+        int err = bt_gatt_notify(currentConnection, &dataTransferService.attrs[5], &magneto, sizeof(magneto));
         if (err) {
             printk("Magneto Notification failed (err %d)\n", err);
         } else {
@@ -194,7 +217,7 @@ void notifySensorData(void)
     }
 
     if (gnssNotifyEnabled) {
-        int err = bt_gatt_notify(current_conn, &dataTransferService.attrs[8], &gnss, sizeof(gnss));
+        int err = bt_gatt_notify(currentConnection, &dataTransferService.attrs[8], &gnss, sizeof(gnss));
         if (err) {
             printk("GNSS Notification failed (err %d)\n", err);
         } else {

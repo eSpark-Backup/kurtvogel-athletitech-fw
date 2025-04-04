@@ -71,6 +71,11 @@
     "printk.h": "c",
     "gatt.h": "c",
     "hci.h": "c",
-    "bluetooth.h": "c"
+    "bluetooth.h": "c",
+    "iterable_sections.h": "c",
+    "att.h": "c",
+    "uuid.h": "c",
+    "conn.h": "c",
+    "compare": "c"
   }
 }
