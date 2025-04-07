@@ -76,6 +76,8 @@
     "att.h": "c",
     "uuid.h": "c",
     "conn.h": "c",
-    "compare": "c"
+    "compare": "c",
+    "cstdint": "cpp",
+    "random": "cpp"
   }
 }

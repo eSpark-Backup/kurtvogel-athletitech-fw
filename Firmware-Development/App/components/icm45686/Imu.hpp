@@ -5,6 +5,7 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/logging/log.h>
 
 
 #define I2C_NODE0 DT_NODELABEL(i2c0) // Use i2c1 if needed

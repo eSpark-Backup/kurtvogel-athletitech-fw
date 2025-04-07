@@ -1,6 +1,7 @@
 
 #include "BLEManager.hpp"
 
+LOG_MODULE_REGISTER(BleManager, LOG_LEVEL_DBG);  // LOG_LEVEL_DBG shows everything
 
 static struct bt_conn *currentConnection = NULL;
 static bool imuNotifyEnabled = false;
@@ -52,16 +53,16 @@ static void gnssCccCfgChanged(const struct bt_gatt_attr *attr, uint16_t value){
 static void connected(struct bt_conn *conn, uint8_t err){
     
         if (err) {
-            printk("Connection failed (err %d)\n", err);
+            LOG_ERR("[connected] Connection failed (err %d)", err);
             return;
         }
-        printk("Connected\n");
+        LOG_INF("[connected] Connection Success");
         currentConnection = bt_conn_ref(conn); // Store connection reference
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason){
 
-        printk("Disconnected (reason %d)\n", reason);
+        LOG_ERR("[disconnected] Disconnected (reason %d)", reason);
         if (currentConnection) {
             bt_conn_unref(currentConnection);
             currentConnection = NULL;
@@ -107,14 +108,14 @@ BT_GATT_SERVICE_DEFINE(dataTransferService,
 void BLEManager::notifySensorData(void){
 
     if (!currentConnection) {
-        printk("No active connection\n");
+        LOG_WRN("[notifySensorData] No active connection" );
         return;
     }
 
     // Update timeStamps
     uint32_t current_time = k_uptime_get_32();
 
-    printk("[notifySensorData] current_time : %d\n\r" , current_time);
+    LOG_INF("[notifySensorData] current_time : %d" , current_time);
     imu.timeStamp = current_time;
     magnet.timeStamp = current_time;
     gnss.timeStamp = current_time;
@@ -123,27 +124,27 @@ void BLEManager::notifySensorData(void){
     if (imuNotifyEnabled) {
         int err = bt_gatt_notify(currentConnection, &dataTransferService.attrs[2], &imu, sizeof(imu));
         if (err) {
-            printk("IMU Notification failed (err %d)\n", err);
+            LOG_ERR("[notifySensorData] IMU Notification failed (err %d)", err);
         } else {
-            printk("IMU notification sent\n");
+            LOG_INF("[notifySensorData] IMU Notification sent (err %d)", err);
         }
     }
     
     if (magnetoNotifyEnabled) {
         int err = bt_gatt_notify(currentConnection, &dataTransferService.attrs[5], &magnet, sizeof(magnet));
         if (err) {
-            printk("magnetNotification failed (err %d)\n", err);
+            LOG_ERR("[notifySensorData] magnetNotification failed (err %d)", err);
         } else {
-            printk("magnetnotification sent\n");
+            LOG_INF("[notifySensorData] magnetNotification sent (err %d)", err);
         }
     }
 
     if (gnssNotifyEnabled) {
         int err = bt_gatt_notify(currentConnection, &dataTransferService.attrs[8], &gnss, sizeof(gnss));
         if (err) {
-            printk("GNSS Notification failed (err %d)\n", err);
+            LOG_ERR("[notifySensorData] GNSS Notification failed (err %d)", err);
         } else {
-            printk("GNSS notification sent\n");
+            LOG_INF("[notifySensorData] GNSS Notification sent (err %d)", err);
         }
     }
 }
@@ -153,19 +154,18 @@ void BLEManager::notifySensorData(void){
 
 
     if (err) {
-        printk("Bluetooth init failed (err %d)\n", err);
+        LOG_ERR("[bleReady] Bluetooth init failed (err %d)", err);
         return;
     }
-
-    printk("Bluetooth initialized\n");
-
+    LOG_INF("[bleReady] Bluetooth initialized");
     // Register connection callbacks
     bt_conn_cb_register(&conn_callbacks);
 
     err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, NULL, 0, NULL, 0);
     if (err) {
-        printk("Advertising failed to start (err %d)\n", err);
+        LOG_ERR("[bleReady] Advertising failed to start (err %d)", err);
     }
+    LOG_INF("[bleReady] Advertising Started");
 
 }
 
@@ -178,15 +178,15 @@ void BLEManager::init(){
 
     int err = bt_enable(bleReady);
     if (err) {
-        printk("Bluetooth init failed (err %d)\n", err);
+        LOG_ERR("[init] BLE init failed (err %d)",err);
         return;
     }
-    printk("BLE Peripheral Started\n");
+    LOG_INF("[init] BLE peripheral started (err %d)",err);
 
 }
 
 void BLEManager::loop(){
 
-        notifySensorData();
     
+    notifySensorData();
 }

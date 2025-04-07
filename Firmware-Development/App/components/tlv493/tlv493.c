@@ -15,6 +15,9 @@
  * Static function definations
  */
 
+LOG_MODULE_REGISTER(Tlv493, LOG_LEVEL_DBG);  // LOG_LEVEL_DBG shows everything
+
+
 bool Tlv493d_SetAccessMode(TLV493D_dev *dev, AccessModes_e mode)
 {
     const AccessModes_t *modes = GetAccModes(mode);
@@ -42,8 +45,8 @@ bool Tlv493d_ReadOut(TLV493D_dev *dev, bool runtime , const struct device *i2c)
     
     if(ret == 0)
     {
-        printf("I2c readout successfull in TLV493_ReadOut!\n\r");
-        printf("buff value in TLV493 Readout: \t");
+        LOG_INF("[Tlv493d_ReadOut] I2c readout successfull in TLV493_ReadOut!");
+        LOG_INF("[Tlv493d_ReadOut] buff value in TLV493 Readout: \t");
         for(uint8_t i = 0 ; i< dataCnt ; i++){
             printf("%02x" , buff[i]);
         }
@@ -53,7 +56,7 @@ bool Tlv493d_ReadOut(TLV493D_dev *dev, bool runtime , const struct device *i2c)
         return true;
     }
     else{
-        printf("I2C readout failed in TLV493_ReadOut with i2c error code %d!\n\r",ret);
+        LOG_ERR("[Tlv493d_ReadOut] I2C readout failed in TLV493_ReadOut with i2c error code %d!",ret);
         return false;
     }
     
@@ -67,8 +70,8 @@ bool Tlv493d_WriteOut(TLV493D_dev *dev ,const struct device *i2c)
     // uint8_t ret = i2c_write(i2c,dev->regWriteData ,TLV493D_WRITE_SIZE, dev->addr);
     int8_t ret = i2c_write_read(i2c , dev->addr, dev->regWriteData ,TLV493D_WRITE_SIZE ,read_buff,TLV493D_WRITE_SIZE);
     if(ret == 0){
-        printf("I2c writeout successfull in Tlv493d_WriteOut!\n\r");
-        printf("buff value in TLV493 write_read : \t");
+        LOG_INF("[Tlv493d_WriteOut] I2c writeout successfull in Tlv493d_WriteOut!");
+        LOG_INF("[Tlv493d_WriteOut]  buff value in TLV493 write_read : \t");
         for(uint8_t i = 0 ; i< TLV493D_WRITE_SIZE ; i++){
             printf("%02x" , read_buff[i]);
         }
@@ -76,7 +79,7 @@ bool Tlv493d_WriteOut(TLV493D_dev *dev ,const struct device *i2c)
         // printf("retcount in TLV493_writeout :%d\n\r" , *(retcount));
         return(true);
     }
-     printf("I2c writeout failed in Tlv493d_WriteOut with i2c error code %d!\n\r",ret);
+     LOG_ERR("[Tlv493d_WriteOut] I2c writeout failed in Tlv493d_WriteOut with i2c error code %d!",ret);
       return(false);
     
     //  retCount = I2C_SendData(dev->addr, dev->regWriteData, TLV493D_WRITE_SIZE);
@@ -86,7 +89,7 @@ bool Tlv493d_WriteOut(TLV493D_dev *dev ,const struct device *i2c)
 
 bool Tlv493d_SetDefaultConfiguration(TLV493D_dev *dev ,const struct device *i2c)
 {
-    printf("setting default config\n\r");
+    LOG_INF("[Tlv493d_SetDefaultConfiguration] setting default config");
     // Set read-reserved bits to write-reserved
     setRegBits(dev->regWriteData, W_RES1, getRegBits(dev->regReadData, R_RES1));
     setRegBits(dev->regWriteData, W_RES2, getRegBits(dev->regReadData, R_RES2));
@@ -201,17 +204,17 @@ bool Tlv493d_EnableDisableTemp(TLV493D_dev* dev, bool flag, bool writeop ,const 
 */
 bool Tlv493d_Setup(TLV493D_dev *dev ,const struct device *i2c)
 {
-    printf("TLV setup started\n\r");
+    LOG_INF("[Tlv493d_Setup]TLV setup started");
     // Tlv493d_ReadOut(dev, false);
     if(Tlv493d_ReadOut(dev, false, i2c) == false){
         return(false);
     }
 
     if(Tlv493d_SetDefaultConfiguration(dev,i2c) == false){
-        printf("Tlv493d_SetDefaultConfiguration failed in setup!\n\r");
+        LOG_ERR("[Tlv493d_Setup] Tlv493d_SetDefaultConfiguration failed in setup!");
         return(false);
     }
-    printf("Tlv493d_SetDefaultConfiguration successful in setup!\n\r");
+    LOG_INF("[Tlv493d_Setup] Tlv493d_SetDefaultConfiguration successful in setup!");
 
     return Tlv493d_WriteOut(dev,i2c);
     
@@ -226,7 +229,7 @@ bool Tlv493d_Setup(TLV493D_dev *dev ,const struct device *i2c)
  */
 bool Tlv493d_UpdateData(TLV493D_dev *dev ,const struct device *i2c)
 {
-    printf("updating data\n\r");
+    LOG_INF("[Tlv493d_UpdateData] updating data");
     if (Tlv493d_ReadOut(dev, true ,i2c))
     {
         if (dev->ConvMode == CONVMODE_12_BIT)
@@ -260,13 +263,13 @@ bool Tlv493d_UpdateData(TLV493D_dev *dev ,const struct device *i2c)
 int8_t Tlv493d_GetValue_8bit(TLV493D_dev *dev)
 {
         int8_t X_value =  (int8_t) dev->dataVal.x;
-        printf("X_value = %d\n\r", X_value);
+        LOG_INF("[Tlv493d_GetValue_8bit] X_value = %d", X_value);
         int8_t Y_value =(int8_t) dev->dataVal.y;
-        printf("Y_value = %d\n\r", Y_value);
+        LOG_INF("[Tlv493d_GetValue_8bit] Y_value = %d", Y_value);
         int8_t Z_value =(int8_t) dev->dataVal.z;
-        printf("Z_value = %d\n\r", Z_value);
+        LOG_INF("[Tlv493d_GetValue_8bit ] Z_value = %d", Z_value);
         int8_t Temp_value = (int8_t)dev->dataVal.t;
-        printf("Temp_value = %d\n\r", Temp_value);
+        LOG_INF("[Tlv493d_GetValue_8bit ] Temp_value = %d", Temp_value);
 
         return 0;
     // if (choice == 0)

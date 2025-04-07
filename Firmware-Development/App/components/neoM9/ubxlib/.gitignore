@@ -1,6 +1,3 @@
-.github*/
-.vscode*/
-
 /port/platform/esp-idf/mcu/esp32/runner/build
 /port/platform/zephyr/runner/build_*
 /port/platform/nrf5sdk/mcu/nrf52/gcc/runner/build

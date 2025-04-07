@@ -16,6 +16,8 @@ extern "C" {
     #include <string.h>
     // #include "i2c.h"
     #include "tlv493_reg.h"
+    #include <zephyr/logging/log.h>
+
 
     #define TLV493D_ADDR1    (0x5E << 1) //default
     #define TLV493D_ADDR2    (0x1F << 1)

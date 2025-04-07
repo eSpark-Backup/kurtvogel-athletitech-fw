@@ -1,5 +1,5 @@
 #include "Gnss.hpp"
-
+LOG_MODULE_REGISTER(GNSS, LOG_LEVEL_DBG);  // LOG_LEVEL_DBG shows everything
 
 
 /** @brief This example demonstrates how to obtain streamed position
@@ -9,45 +9,35 @@
  * code runs is made at build time, see the README.md for
  * instructions.
  */
-#include <zephyr/kernel.h>
-#include <zephyr/device.h>
-#include <zephyr/devicetree.h>
-#include <zephyr/drivers/i2c.h>
-#include <zephyr/sys/printk.h>
+#define U_CFG_DISABLE_TEST_AUTOMATION 0
 
-// # include "u_cfg_app_platform_specific.h"
-// #  include "u_cfg_test_platform_specific.h"
-// # include "ubxlib.h"
+#ifdef U_CFG_TEST_GNSS_MODULE_TYPE
 
- #define U_CFG_DISABLE_TEST_AUTOMATION 0
 
- #ifdef U_CFG_TEST_GNSS_MODULE_TYPE
 
- // Bring in all of the ubxlib public header files
- # include "ubxlib.h"
- 
- // Bring in the application settings
- # include "u_cfg_app_platform_specific.h"
- 
- # ifndef U_CFG_DISABLE_TEST_AUTOMATION
- // This purely for internal u-blox testing
- #  include "u_cfg_test_platform_specific.h"
- # endif
- 
- /* ----------------------------------------------------------------
-  * COMPILE-TIME MACROS
-  * -------------------------------------------------------------- */
- 
+
+// Bring in all of the ubxlib public header files
+# include "ubxlib.h"
+
+// Bring in the application settings
+# include "u_cfg_app_platform_specific.h"
+
+# ifndef U_CFG_DISABLE_TEST_AUTOMATION
+// This purely for internal u-blox testing
+#  include "u_cfg_test_platform_specific.h"
+# endif
+
+/* ----------------------------------------------------------------
+ * COMPILE-TIME MACROS
+ * -------------------------------------------------------------- */
+
 //  For u-blox internal testing only
- # ifdef U_PORT_TEST_ASSERT
- #  define EXAMPLE_FINAL_STATE(x) U_PORT_TEST_ASSERT(x);
- # else
- #  define EXAMPLE_FINAL_STATE(x)
- # endif
- 
-//  # ifndef U_PORT_TEST_FUNCTION
-//  #  error if you are not using the unit test framework to run this code you must ensure that the platform clocks/RTOS are set up and either define U_PORT_TEST_FUNCTION yourself or replace it as necessary.
-//  # endif
+# ifdef U_PORT_TEST_ASSERT
+#  define EXAMPLE_FINAL_STATE(x) U_PORT_TEST_ASSERT(x);
+# else
+#  define EXAMPLE_FINAL_STATE(x)
+# endif
+
  
  /* ----------------------------------------------------------------
   * TYPES
@@ -61,6 +51,7 @@
      char *pSomething;
      int32_t somethingElse;
  } MyContext_t;
+
  
  /* ----------------------------------------------------------------
   * VARIABLES
@@ -271,7 +262,7 @@
      if (errorCode == 0) {
          prefix[0] = latLongToBits(longitudeX1e7, &(whole[0]), &(fraction[0]));
          prefix[1] = latLongToBits(latitudeX1e7, &(whole[1]), &(fraction[1]));
-         uPortLog("I am here: https://maps.google.com/?q=%c%d.%07d,%c%d.%07d\n",
+         LOG_INF("[callback] I am here: https://maps.google.com/?q=%c%d.%07d,%c%d.%07d",
                   prefix[1], whole[1], fraction[1], prefix[0], whole[0], fraction[0]);
          gPositionCount++;
      }
@@ -285,80 +276,66 @@
  // clocks must have been started and the RTOS must be running;
  // we are in task space.
 //  U_PORT_TEST_FUNCTION("[example]", "exampleGnssPos")
+uDeviceHandle_t devHandle = NULL;
+MyContext_t context = {0};
 
- int main(){
+void Gnss::init() {
+    int32_t returnCode;
 
- 
-    
-     uDeviceHandle_t devHandle = NULL;
-     int32_t returnCode;
-     int32_t guardCount = 0;
-     MyContext_t context = {0};
- 
-     // Initialise the APIs we will need
-     uPortInit();
-     uPortI2cInit(); // You only need this if an I2C interface is used
-     uDeviceInit();
- 
-     // Open the device
-     returnCode = uDeviceOpen(&gDeviceCfg, &devHandle);
-     printk("[ main ] returnCode : %d\n\r" , returnCode);
-     uPortLog("Opened device with return code %d.\n", returnCode);
- 
-     if (returnCode == 0) {
-         // Since we are not using the common APIs we do not need
-         // to call uNetworkInteraceUp()/uNetworkInteraceDown().
- 
-         // If you need to pass context data to
-         // uGnssPosGetStreamedStart(), which does not include
-         // a user parameter in its function signature, set
-         // a user context for ourselves in the device, which
-         // we can pick up in callback()
-         uDeviceSetUserContext(devHandle, (void *) &context);
- 
-         // Start to get position
-         uPortLog("Starting position stream.\n");
-         returnCode = uGnssPosGetStreamedStart(devHandle,
-                                               U_GNSS_POS_STREAMED_PERIOD_DEFAULT_MS,
-                                               callback);
-         if (returnCode == 0) {
- 
-             uPortLog("Waiting up to 60 seconds for 5 position fixes.\n");
-             while ((gPositionCount < 5) && (guardCount < 60)) {
-                 uPortTaskBlock(1000);
-                 guardCount++;
-             }
-             // Stop getting position
-             uGnssPosGetStreamedStop(devHandle);
- 
-         } else {
-             uPortLog("Unable to start position stream!\n");
-         }
- 
-         // Close the device
-         // Note: we don't power the device down here in order
-         // to speed up testing; you may prefer to power it off
-         // by setting the second parameter to true.
-         uDeviceClose(devHandle, false);
- 
-     } else {
-         uPortLog("Unable to open GNSS!\n");
-     }
- 
-     // Tidy up
-     uDeviceDeinit();
-     uPortI2cDeinit(); // You only need this if an I2C interface is used
-     uPortDeinit();
- 
-     uPortLog("Done.\n");
- 
- #if ((U_CFG_APP_GNSS_UART >= 0) || (U_CFG_APP_GNSS_I2C >= 0) || (U_CFG_APP_GNSS_SPI >= 0))
-     // For u-blox internal testing only
-    //  EXAMPLE_FINAL_STATE(((gPositionCount > 0) && (returnCode == 0)) ||
-    //                      (returnCode == U_ERROR_COMMON_NOT_SUPPORTED));
- # endif
- }
- 
+    // Initialise the APIs we will need
+    uPortInit();
+    uPortI2cInit();
+    uDeviceInit();
+
+    // Open the device
+    returnCode = uDeviceOpen(&gDeviceCfg, &devHandle);
+    LOG_INF("[init] returnCode : %d", returnCode);
+    LOG_INF("[init] Opened device with return code %d.", returnCode);
+
+    if (returnCode == 0) {
+        // Store context
+        uDeviceSetUserContext(devHandle, (void *)&context);
+
+        // Start position stream
+        LOG_INF("[init] Starting position stream.");
+        returnCode = uGnssPosGetStreamedStart(devHandle,
+                                              U_GNSS_POS_STREAMED_PERIOD_DEFAULT_MS,
+                                              callback);
+        if (returnCode != 0) {
+            LOG_ERR("[init] Unable to start position stream!");
+        }
+    } else {
+        LOG_ERR("[init] Unable to open GNSS!");
+    }
+}
+
+void Gnss::loop() {
+    int32_t guardCount = 0;
+
+    if (devHandle == NULL) {
+        LOG_ERR("[loop] Device not initialized!");
+        return;
+    }
+
+    LOG_INF("[loop] Waiting up to 60 seconds for 5 position fixes.");
+    while ((gPositionCount < 5) && (guardCount < 60)) {
+        uPortTaskBlock(1000);
+        guardCount++;
+    }
+
+    // Stop streaming
+    uGnssPosGetStreamedStop(devHandle);
+
+    // Close and clean up
+    uDeviceClose(devHandle, false);
+    uDeviceDeinit();
+    uPortI2cDeinit();
+    uPortDeinit();
+
+    LOG_INF("[loop] Done");
+}
+
+
  #endif // #ifdef U_CFG_TEST_GNSS_MODULE_TYPE
  
  // End of file

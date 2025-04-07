@@ -7,6 +7,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/hci.h>
+#include <zephyr/logging/log.h>
 
 
 typedef struct  {
