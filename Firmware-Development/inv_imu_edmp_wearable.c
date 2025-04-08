@@ -67,13 +67,13 @@ int inv_imu_edmp_b2s_enable(inv_imu_device_t *s)
 	fifo_config0_t  fifo_config0;
 	edmp_apex_en1_t edmp_apex_en1;
 
-	status |= inv_imu_read_reg(s, FIFO_CONFIG0, 1, (uint8_t *)&fifo_config0);
+	status |= inv_imu_read_reg( dev , s, FIFO_CONFIG0, 1, (uint8_t *)&fifo_config0);
 	if (fifo_config0.fifo_depth == FIFO_CONFIG0_FIFO_DEPTH_MAX)
 		return INV_IMU_ERROR;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 	edmp_apex_en1.feature3_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 
 	return status;
 }
@@ -83,9 +83,9 @@ int inv_imu_edmp_b2s_disable(inv_imu_device_t *s)
 	int             status = INV_IMU_OK;
 	edmp_apex_en1_t edmp_apex_en1;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 	edmp_apex_en1.feature3_en = INV_IMU_DISABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 
 	return status;
 }

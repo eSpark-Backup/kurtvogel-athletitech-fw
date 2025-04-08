@@ -102,14 +102,14 @@ static int run_internal_selftest(inv_imu_device_t *s)
 	int_apex_config1_t int_apex_config1;
 	int                timeout_us = 3000000; /* 3 seconds */
 
-	rc |= inv_imu_read_reg(s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
+	rc |= inv_imu_read_reg( dev , s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
 	reg_host_msg.testopenable = INV_IMU_ENABLE;
-	rc |= inv_imu_write_reg(s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
+	rc |= inv_imu_write_reg( dev, s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
 
 	/* Enable desired interrupt */
-	rc |= inv_imu_read_reg(s, INT_APEX_CONFIG1, 1, (uint8_t *)&int_apex_config1);
+	rc |= inv_imu_read_reg( dev , s, INT_APEX_CONFIG1, 1, (uint8_t *)&int_apex_config1);
 	int_apex_config1.int_status_mask_pin_selftest_done = 0;
-	rc |= inv_imu_write_reg(s, INT_APEX_CONFIG1, 1, (uint8_t *)&int_apex_config1);
+	rc |= inv_imu_write_reg( dev, s, INT_APEX_CONFIG1, 1, (uint8_t *)&int_apex_config1);
 
 	/* Run EDMP */
 	rc |= inv_imu_edmp_run_ondemand(s, INV_IMU_EDMP_INT2);
@@ -117,7 +117,7 @@ static int run_internal_selftest(inv_imu_device_t *s)
 	/* Wait for the desired interrupt */
 	while (1) {
 		int_apex_status1_t int_apex_status1;
-		rc |= inv_imu_read_reg(s, INT_APEX_STATUS1, 1, (uint8_t *)&int_apex_status1);
+		rc |= inv_imu_read_reg( dev , s, INT_APEX_STATUS1, 1, (uint8_t *)&int_apex_status1);
 		if (int_apex_status1.int_status_selftest_done)
 			break;
 
@@ -129,9 +129,9 @@ static int run_internal_selftest(inv_imu_device_t *s)
 	}
 
 	/* Disable interrupt */
-	rc |= inv_imu_read_reg(s, INT_APEX_CONFIG1, 1, (uint8_t *)&int_apex_config1);
+	rc |= inv_imu_read_reg( dev , s, INT_APEX_CONFIG1, 1, (uint8_t *)&int_apex_config1);
 	int_apex_config1.int_status_mask_pin_selftest_done = 1;
-	rc |= inv_imu_write_reg(s, INT_APEX_CONFIG1, 1, (uint8_t *)&int_apex_config1);
+	rc |= inv_imu_write_reg( dev, s, INT_APEX_CONFIG1, 1, (uint8_t *)&int_apex_config1);
 
 	return rc;
 }

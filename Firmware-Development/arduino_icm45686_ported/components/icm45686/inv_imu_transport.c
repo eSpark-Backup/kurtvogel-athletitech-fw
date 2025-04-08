@@ -21,59 +21,59 @@
 /* Static function definition */
 
 /* For Direct access REGisters */
-static int write_dreg(inv_imu_transport_t *t, uint8_t reg, uint32_t len, const uint8_t *buf);
-static int read_dreg(inv_imu_transport_t *t, uint8_t reg, uint32_t len, uint8_t *buf);
+static int write_dreg(const struct device *dev , inv_imu_transport_t *t, uint8_t reg, uint32_t len, const uint8_t *buf);
+static int read_dreg(const struct device *dev , inv_imu_transport_t *t, uint8_t reg, uint32_t len, uint8_t *buf);
 
 /* For Mclk REGisters */
 static int check_out_of_bounds_mreg(uint32_t reg, uint32_t len);
-static int write_mreg(inv_imu_transport_t *t, uint32_t reg, uint32_t len, const uint8_t *buf);
-static int read_mreg(inv_imu_transport_t *t, uint32_t reg, uint32_t len, uint8_t *buf);
+static int write_mreg(const struct device *dev , inv_imu_transport_t *t, uint32_t reg, uint32_t len, const uint8_t *buf);
+static int read_mreg(const struct device *dev , inv_imu_transport_t *t, uint32_t reg, uint32_t len, uint8_t *buf);
 
-int inv_imu_read_reg(void *t, uint32_t reg, uint32_t len, uint8_t *buf)
+int inv_imu_read_reg(const struct device *dev , void *t, uint32_t reg, uint32_t len, uint8_t *buf)
 {
 	inv_imu_transport_t *tr = (inv_imu_transport_t *)t;
 	if (reg > 0xFF)
-		return read_mreg(tr, reg & 0xFFFF, len, buf);
+		return read_mreg(dev , tr, reg & 0xFFFF, len, buf);
 	else
-		return read_dreg(tr, reg, len, buf);
+		return read_dreg(dev , tr, reg, len, buf);
 }
 
-int inv_imu_write_reg(void *t, uint32_t reg, uint32_t len, const uint8_t *buf)
+int inv_imu_write_reg(const struct device *dev , void *t, uint32_t reg, uint32_t len, const uint8_t *buf)
 {
 	inv_imu_transport_t *tr = (inv_imu_transport_t *)t;
 	if (reg > 0xFF)
-		return write_mreg(tr, reg, len, buf);
+		return write_mreg(dev ,tr, reg, len, buf);
 	else
-		return write_dreg(tr, reg, len, buf);
+		return write_dreg(dev , tr, reg, len, buf);
 }
 
-int inv_imu_read_sram(void *t, uint32_t addr, uint32_t len, uint8_t *buf)
+int inv_imu_read_sram(const struct device *dev , void *t, uint32_t addr, uint32_t len, uint8_t *buf)
 {
 	inv_imu_transport_t *tr = (inv_imu_transport_t *)t;
-	return read_mreg(tr, addr, len, buf);
+	return read_mreg(dev , tr, addr, len, buf);
 }
 
-int inv_imu_write_sram(void *t, uint32_t addr, uint32_t len, const uint8_t *buf)
+int inv_imu_write_sram(const struct device *dev , void *t, uint32_t addr, uint32_t len, const uint8_t *buf)
 {
 	inv_imu_transport_t *tr = (inv_imu_transport_t *)t;
-	return write_mreg(tr, addr, len, buf);
+	return write_mreg(dev , tr, addr, len, buf);
 }
 
 /*
  * Static functions implementation 
  */
 
-static int read_dreg(inv_imu_transport_t *t, uint8_t reg, uint32_t len, uint8_t *buf)
+static int read_dreg(const struct device *dev , inv_imu_transport_t *t, uint8_t reg, uint32_t len, uint8_t *buf)
 {
-	if (t->read_reg(reg, buf, len) != 0)
+	if (t->read_reg(dev ,reg, buf, len) != 0)
 		return INV_IMU_ERROR_TRANSPORT;
 
 	return INV_IMU_OK;
 }
 
-static int write_dreg(inv_imu_transport_t *t, uint8_t reg, uint32_t len, const uint8_t *buf)
+static int write_dreg(const struct device *dev , inv_imu_transport_t *t, uint8_t reg, uint32_t len, const uint8_t *buf)
 {
-	if (t->write_reg(reg, buf, len) != 0)
+	if (t->write_reg(dev , reg, buf, len) != 0)
 		return INV_IMU_ERROR_TRANSPORT;
 
 	return INV_IMU_OK;
@@ -105,7 +105,7 @@ static int check_out_of_bounds_mreg(uint32_t reg, uint32_t len)
 	return INV_IMU_OK;
 }
 
-static int read_mreg(inv_imu_transport_t *t, uint32_t reg, uint32_t len, uint8_t *buf)
+static int read_mreg(const struct device *dev , inv_imu_transport_t *t, uint32_t reg, uint32_t len, uint8_t *buf)
 {
 	int     status = INV_IMU_OK;
 	uint8_t data[2];
@@ -118,7 +118,7 @@ static int read_mreg(inv_imu_transport_t *t, uint32_t reg, uint32_t len, uint8_t
 	data[0] = (reg & 0xFF00) >> 8;
 	data[1] = reg & 0xFF;
 	t->sleep_us(4);
-	status |= write_dreg(t, IREG_ADDR_15_8, 2, data);
+	status |= write_dreg(dev , t, IREG_ADDR_15_8, 2, data);
 
 	if (status)
 		return status;
@@ -126,13 +126,13 @@ static int read_mreg(inv_imu_transport_t *t, uint32_t reg, uint32_t len, uint8_t
 	/* Read all bytes one by one */
 	for (uint32_t i = 0; i < len; i++) {
 		t->sleep_us(4);
-		status |= read_dreg(t, IREG_DATA, 1, &buf[i]);
+		status |= read_dreg(dev , t, IREG_DATA, 1, &buf[i]);
 	}
 
 	return status;
 }
 
-static int write_mreg(inv_imu_transport_t *t, uint32_t reg, uint32_t len, const uint8_t *buf)
+static int write_mreg(const struct device *dev , inv_imu_transport_t *t, uint32_t reg, uint32_t len, const uint8_t *buf)
 {
 	int     status = INV_IMU_OK;
 	uint8_t data[3];
@@ -149,7 +149,7 @@ static int write_mreg(inv_imu_transport_t *t, uint32_t reg, uint32_t len, const 
 
 	/* Burst write address and first byte */
 	t->sleep_us(4);
-	status |= write_dreg(t, IREG_ADDR_15_8, 3, data);
+	status |= write_dreg(dev , t, IREG_ADDR_15_8, 3, data);
 	t->sleep_us(4);
 
 	if (status)
@@ -157,7 +157,7 @@ static int write_mreg(inv_imu_transport_t *t, uint32_t reg, uint32_t len, const 
 
 	/* Loop on the remaining bytes */
 	for (uint32_t i = 1; i < len; i++) {
-		status |= write_dreg(t, IREG_DATA, 1, &buf[i]);
+		status |= write_dreg(dev , t, IREG_DATA, 1, &buf[i]);
 		t->sleep_us(4);
 	}
 

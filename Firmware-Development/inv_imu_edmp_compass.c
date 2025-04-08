@@ -39,9 +39,9 @@ int inv_imu_edmp_compass_enable_soft_iron_cor(inv_imu_device_t *s)
 	int             status = INV_IMU_OK;
 	edmp_apex_en1_t edmp_apex_en1;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 	edmp_apex_en1.soft_hard_iron_corr_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 
 	return status;
 }
@@ -51,9 +51,9 @@ int inv_imu_edmp_compass_disable_soft_iron_cor(inv_imu_device_t *s)
 	int             status = INV_IMU_OK;
 	edmp_apex_en1_t edmp_apex_en1;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 	edmp_apex_en1.soft_hard_iron_corr_en = INV_IMU_DISABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 
 	return status;
 }
@@ -66,16 +66,16 @@ int inv_imu_edmp_compass_set_frequency(inv_imu_device_t *                  s,
 	int_i2cm_source_t     int_i2cm_source;
 
 	/* Get data from EDMP and FIFO : enable external sensor */
-	status |= inv_imu_read_reg(s, DMP_EXT_SEN_ODR_CFG, 1, (uint8_t *)&dmp_ext_sen_odr_cfg);
+	status |= inv_imu_read_reg( dev , s, DMP_EXT_SEN_ODR_CFG, 1, (uint8_t *)&dmp_ext_sen_odr_cfg);
 	dmp_ext_sen_odr_cfg.ext_sensor_en = 1;
 	dmp_ext_sen_odr_cfg.ext_odr       = frequency;
-	status |= inv_imu_write_reg(s, DMP_EXT_SEN_ODR_CFG, 1, (uint8_t *)&dmp_ext_sen_odr_cfg);
+	status |= inv_imu_write_reg( dev, s, DMP_EXT_SEN_ODR_CFG, 1, (uint8_t *)&dmp_ext_sen_odr_cfg);
 
 	/* Trigger I2CM by internal odr event */
 	/* int_status_i2cm_smc_ext_odr_en = 1, enable external sensor odr interrupt */
-	status |= inv_imu_read_reg(s, INT_I2CM_SOURCE, 1, (uint8_t *)&int_i2cm_source);
+	status |= inv_imu_read_reg( dev , s, INT_I2CM_SOURCE, 1, (uint8_t *)&int_i2cm_source);
 	int_i2cm_source.int_status_i2cm_smc_ext_odr_en = 1;
-	status |= inv_imu_write_reg(s, INT_I2CM_SOURCE, 1, (uint8_t *)&int_i2cm_source);
+	status |= inv_imu_write_reg( dev, s, INT_I2CM_SOURCE, 1, (uint8_t *)&int_i2cm_source);
 
 	return status;
 }
@@ -93,7 +93,7 @@ int inv_imu_edmp_compass_enable_es(inv_imu_device_t *s)
 	status |= INV_IMU_WRITE_EDMP_SRAM(s, EDMP_ES0_COMPASS_EN, &data);
 
 	/* Optimize power when APEX features is at minimum */
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 2, (uint8_t *)&cfg);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 2, (uint8_t *)&cfg);
 	if (cfg.edmp_apex_en0.pedo_en || cfg.edmp_apex_en0.tilt_en || cfg.edmp_apex_en0.ff_en ||
 	    cfg.edmp_apex_en0.smd_en || cfg.edmp_apex_en0.tap_en || cfg.edmp_apex_en0.r2w_en ||
 	    cfg.edmp_apex_en1.basic_smd_en)

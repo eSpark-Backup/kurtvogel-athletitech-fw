@@ -24,19 +24,19 @@
 
 static int check_dmp_odr_decimation(inv_imu_device_t *s);
 
-int inv_imu_edmp_set_frequency(inv_imu_device_t *s, const dmp_ext_sen_odr_cfg_apex_odr_t frequency)
+int inv_imu_edmp_set_frequency(const struct device *dev  , inv_imu_device_t *s, const dmp_ext_sen_odr_cfg_apex_odr_t frequency)
 {
 	int                   status = INV_IMU_OK;
 	dmp_ext_sen_odr_cfg_t dmp_ext_sen_odr_cfg;
 
-	status |= inv_imu_read_reg(s, DMP_EXT_SEN_ODR_CFG, 1, (uint8_t *)&dmp_ext_sen_odr_cfg);
+	status |= inv_imu_read_reg( dev , s, DMP_EXT_SEN_ODR_CFG, 1, (uint8_t *)&dmp_ext_sen_odr_cfg);
 	dmp_ext_sen_odr_cfg.apex_odr = frequency;
-	status |= inv_imu_write_reg(s, DMP_EXT_SEN_ODR_CFG, 1, (uint8_t *)&dmp_ext_sen_odr_cfg);
+	status |= inv_imu_write_reg( dev, s, DMP_EXT_SEN_ODR_CFG, 1, (uint8_t *)&dmp_ext_sen_odr_cfg);
 
 	return status;
 }
 
-int inv_imu_edmp_init_apex(inv_imu_device_t *s)
+int inv_imu_edmp_init_apex(const struct device *dev , inv_imu_device_t *s)
 {
 	int                status = INV_IMU_OK;
 	apex_buffer_mgmt_t apex_buffer_mgmt;
@@ -51,17 +51,17 @@ int inv_imu_edmp_init_apex(inv_imu_device_t *s)
 	 * write step count in EDMP_PED_STEP_CNT_BUF2.
 	 * Initialize read and write pointers for freefall to 0.
 	 */
-	status |= inv_imu_read_reg(s, APEX_BUFFER_MGMT, 1, (uint8_t *)&apex_buffer_mgmt);
+	status |= inv_imu_read_reg( dev , s, APEX_BUFFER_MGMT, 1, (uint8_t *)&apex_buffer_mgmt);
 	apex_buffer_mgmt.step_count_host_rptr  = 2;
 	apex_buffer_mgmt.step_count_edmp_wptr  = 0;
 	apex_buffer_mgmt.ff_duration_host_rptr = 0;
 	apex_buffer_mgmt.ff_duration_edmp_wptr = 0;
-	status |= inv_imu_write_reg(s, APEX_BUFFER_MGMT, 1, (uint8_t *)&apex_buffer_mgmt);
+	status |= inv_imu_write_reg( dev, s, APEX_BUFFER_MGMT, 1, (uint8_t *)&apex_buffer_mgmt);
 
 	/* Same impl as inv_imu_adv_power_up_sram, duplicated here to prevent dependency */
-	status |= inv_imu_read_reg(s, FIFO_SRAM_SLEEP, 1, (uint8_t *)&fifo_sram_sleep);
+	status |= inv_imu_read_reg( dev , s, FIFO_SRAM_SLEEP, 1, (uint8_t *)&fifo_sram_sleep);
 	fifo_sram_sleep.fifo_gsleep_shared_sram = 0x03;
-	status |= inv_imu_write_reg(s, FIFO_SRAM_SLEEP, 1, (uint8_t *)&fifo_sram_sleep);
+	status |= inv_imu_write_reg( dev, s, FIFO_SRAM_SLEEP, 1, (uint8_t *)&fifo_sram_sleep);
 
 	/* Clear SRAM */
 	value = 0;
@@ -73,7 +73,7 @@ int inv_imu_edmp_init_apex(inv_imu_device_t *s)
 	return status;
 }
 
-int inv_imu_edmp_recompute_apex_decimation(inv_imu_device_t *s)
+int inv_imu_edmp_recompute_apex_decimation(const struct device *dev, inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	uint8_t         value;
@@ -87,8 +87,8 @@ int inv_imu_edmp_recompute_apex_decimation(inv_imu_device_t *s)
 	 * Check that DMP is turned OFF before requesting init APEX and save DMP enabled bits before
 	 * requesting init procedure
 	 */
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&save_edmp_apex_en0);
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&save_edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&save_edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&save_edmp_apex_en1);
 	if (save_edmp_apex_en1.edmp_enable)
 		return INV_IMU_ERROR;
 
@@ -97,9 +97,9 @@ int inv_imu_edmp_recompute_apex_decimation(inv_imu_device_t *s)
 	 *  execution when initialization is done if any sensor is running
 	 */
 	value = 0x3F;
-	status |= inv_imu_write_reg(s, STATUS_MASK_PIN_0_7, 1, &value);
-	status |= inv_imu_write_reg(s, STATUS_MASK_PIN_8_15, 1, &value);
-	status |= inv_imu_write_reg(s, STATUS_MASK_PIN_16_23, 1, &value);
+	status |= inv_imu_write_reg( dev, s, STATUS_MASK_PIN_0_7, 1, &value);
+	status |= inv_imu_write_reg( dev, s, STATUS_MASK_PIN_8_15, 1, &value);
+	status |= inv_imu_write_reg( dev, s, STATUS_MASK_PIN_16_23, 1, &value);
 
 	/* Trigger EDMP with on-demand mode */
 	status |= inv_imu_edmp_unmask_int_src(s, INV_IMU_EDMP_INT0, EDMP_INT_SRC_ON_DEMAND_MASK);
@@ -108,14 +108,14 @@ int inv_imu_edmp_recompute_apex_decimation(inv_imu_device_t *s)
 	 * Request to execute init procedure, make sure init is the only feature enabled
 	 * (overwrite previously saved config)
 	 */
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en1.init_en     = INV_IMU_ENABLE;
 	edmp_apex_en1.edmp_enable = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 
-	status |= inv_imu_read_reg(s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
+	status |= inv_imu_read_reg( dev , s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
 	reg_host_msg.edmp_on_demand_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
+	status |= inv_imu_write_reg( dev, s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
 
 	/* Wait 200 us to give enough time for EMDP to start running */
 	inv_imu_sleep_us(s, 200);
@@ -127,15 +127,15 @@ int inv_imu_edmp_recompute_apex_decimation(inv_imu_device_t *s)
 	status |= inv_imu_edmp_mask_int_src(s, INV_IMU_EDMP_INT0, EDMP_INT_SRC_ON_DEMAND_MASK);
 
 	/* Restore original DMP state, with DMP necessarily disabled as it was checked at the beginning of this function */
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&save_edmp_apex_en0);
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&save_edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&save_edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&save_edmp_apex_en1);
 
 	status |= inv_imu_edmp_unmask_int_src(s, INV_IMU_EDMP_INT0, EDMP_INT_SRC_ACCEL_DRDY_MASK);
 
 	return status;
 }
 
-int inv_imu_edmp_get_apex_parameters(inv_imu_device_t *s, inv_imu_edmp_apex_parameters_t *p)
+int inv_imu_edmp_get_apex_parameters(const struct device *dev  , inv_imu_device_t *s, inv_imu_edmp_apex_parameters_t *p)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en1_t edmp_apex_en1;
@@ -213,19 +213,19 @@ int inv_imu_edmp_get_apex_parameters(inv_imu_device_t *s, inv_imu_edmp_apex_para
 
 	/* Power save */
 	status |= INV_IMU_READ_EDMP_SRAM(s, EDMP_POWER_SAVE_TIME, (uint8_t *)&p->power_save_time);
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 	p->power_save_en = edmp_apex_en1.power_save_en ? INV_IMU_ENABLE : INV_IMU_DISABLE;
 
 	return status;
 }
 
-int inv_imu_edmp_set_apex_parameters(inv_imu_device_t *s, const inv_imu_edmp_apex_parameters_t *p)
+int inv_imu_edmp_set_apex_parameters(const struct device *dev , inv_imu_device_t *s, const inv_imu_edmp_apex_parameters_t *p)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_enx_t cfg;
 
 	/* DMP cannot be configured if it is running, hence make sure all APEX algorithms are off */
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 2, (uint8_t *)&cfg);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 2, (uint8_t *)&cfg);
 	if (cfg.edmp_apex_en0.pedo_en || cfg.edmp_apex_en0.tilt_en || cfg.edmp_apex_en0.ff_en ||
 	    cfg.edmp_apex_en0.smd_en || cfg.edmp_apex_en0.tap_en || cfg.edmp_apex_en0.r2w_en ||
 	    cfg.edmp_apex_en1.basic_smd_en || cfg.edmp_apex_en1.soft_hard_iron_corr_en)
@@ -308,19 +308,19 @@ int inv_imu_edmp_set_apex_parameters(inv_imu_device_t *s, const inv_imu_edmp_ape
 
 	/* Power save */
 	status |= INV_IMU_WRITE_EDMP_SRAM(s, EDMP_POWER_SAVE_TIME, (uint8_t *)&p->power_save_time);
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&cfg.edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&cfg.edmp_apex_en1);
 	cfg.edmp_apex_en1.power_save_en = p->power_save_en;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&cfg.edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&cfg.edmp_apex_en1);
 
 	return status;
 }
 
-int inv_imu_edmp_get_config_int_apex(inv_imu_device_t *s, inv_imu_edmp_int_state_t *it)
+int inv_imu_edmp_get_config_int_apex(const struct device *dev , inv_imu_device_t *s, inv_imu_edmp_int_state_t *it)
 {
 	int                status = INV_IMU_OK;
 	int_apex_configx_t cfg;
 
-	status |= inv_imu_read_reg(s, INT_APEX_CONFIG0, 2, (uint8_t *)&cfg);
+	status |= inv_imu_read_reg( dev , s, INT_APEX_CONFIG0, 2, (uint8_t *)&cfg);
 	/* INT_APEX_CONFIG0 */
 	it->INV_TAP           = !cfg.int_apex_config0.int_status_mask_pin_tap_detect;
 	it->INV_HIGHG         = !cfg.int_apex_config0.int_status_mask_pin_high_g_det;
@@ -344,7 +344,7 @@ int inv_imu_edmp_get_config_int_apex(inv_imu_device_t *s, inv_imu_edmp_int_state
 	return status;
 }
 
-int inv_imu_edmp_set_config_int_apex(inv_imu_device_t *s, const inv_imu_edmp_int_state_t *it)
+int inv_imu_edmp_set_config_int_apex(const struct device *dev , inv_imu_device_t *s, const inv_imu_edmp_int_state_t *it)
 {
 	int                status = INV_IMU_OK;
 	int_apex_configx_t cfg    = { 0 };
@@ -371,31 +371,31 @@ int inv_imu_edmp_set_config_int_apex(inv_imu_device_t *s, const inv_imu_edmp_int
 	cfg.int_apex_config1.int_status_mask_pin_selftest_done = !it->INV_SELF_TEST;
 	cfg.int_apex_config1.int_status_mask_pin_sa_done       = !it->INV_SEC_AUTH;
 
-	status |= inv_imu_write_reg(s, INT_APEX_CONFIG0, 2, (uint8_t *)&cfg);
+	status |= inv_imu_write_reg( dev, s, INT_APEX_CONFIG0, 2, (uint8_t *)&cfg);
 
 	return status;
 }
 
-int inv_imu_edmp_enable(inv_imu_device_t *s)
+int inv_imu_edmp_enable(const struct device *dev , inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en1_t edmp_apex_en1;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 	edmp_apex_en1.edmp_enable = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 
 	return status;
 }
 
-int inv_imu_edmp_disable(inv_imu_device_t *s)
+int inv_imu_edmp_disable(const struct device *dev , inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en1_t edmp_apex_en1;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 	edmp_apex_en1.edmp_enable = INV_IMU_DISABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 
 	return status;
 }
@@ -408,7 +408,7 @@ int inv_imu_edmp_disable(inv_imu_device_t *s)
  * Returns INV_IMU_ERROR_EDMP_ODR if inv_imu_edmp_recompute_apex_decimation() should have been
  * called.
  */
-static int check_dmp_odr_decimation(inv_imu_device_t *s)
+static int check_dmp_odr_decimation(const struct device *dev , inv_imu_device_t *s)
 {
 	int                            status = INV_IMU_OK;
 	uint8_t                        dmp_decim_rate_from_sram;
@@ -417,7 +417,7 @@ static int check_dmp_odr_decimation(inv_imu_device_t *s)
 
 	status |= inv_imu_read_sram(s, 0x460 /* edmp decimation rate address in SRAM */, 1,
 	                            &dmp_decim_rate_from_sram);
-	status |= inv_imu_read_reg(s, DMP_EXT_SEN_ODR_CFG, 1, (uint8_t *)&dmp_ext_sen_odr_cfg);
+	status |= inv_imu_read_reg( dev , s, DMP_EXT_SEN_ODR_CFG, 1, (uint8_t *)&dmp_ext_sen_odr_cfg);
 	apex_odr = (dmp_ext_sen_odr_cfg_apex_odr_t)dmp_ext_sen_odr_cfg.apex_odr;
 	switch (dmp_decim_rate_from_sram) {
 	case 15:
@@ -451,7 +451,7 @@ static int check_dmp_odr_decimation(inv_imu_device_t *s)
 	}
 }
 
-int inv_imu_edmp_enable_pedometer(inv_imu_device_t *s)
+int inv_imu_edmp_enable_pedometer(const struct device *dev , inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en0_t edmp_apex_en0;
@@ -461,30 +461,30 @@ int inv_imu_edmp_enable_pedometer(inv_imu_device_t *s)
 		return status;
 
 	/* Make sure pedometer is not already enabled to prevent messing up pointers */
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	if (edmp_apex_en0.pedo_en)
 		return status;
 
 	/* Enable Pedometer */
 	edmp_apex_en0.pedo_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 
 	return status;
 }
 
-int inv_imu_edmp_disable_pedometer(inv_imu_device_t *s)
+int inv_imu_edmp_disable_pedometer(const struct device *dev , inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en0_t edmp_apex_en0;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en0.pedo_en = INV_IMU_DISABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 
 	return status;
 }
 
-int inv_imu_edmp_enable_smd(inv_imu_device_t *s)
+int inv_imu_edmp_enable_smd(const struct device *dev , inv_imu_device_t *s)
 {
 	int status = INV_IMU_OK;
 #if INV_IMU_USE_BASIC_SMD
@@ -494,9 +494,9 @@ int inv_imu_edmp_enable_smd(inv_imu_device_t *s)
 	if (status)
 		return status;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 	edmp_apex_en1.basic_smd_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 #else
 	edmp_apex_en0_t edmp_apex_en0;
 
@@ -504,33 +504,33 @@ int inv_imu_edmp_enable_smd(inv_imu_device_t *s)
 	if (status)
 		return status;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en0.smd_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 #endif
 	return status;
 }
 
-int inv_imu_edmp_disable_smd(inv_imu_device_t *s)
+int inv_imu_edmp_disable_smd(const struct device *dev , inv_imu_device_t *s)
 {
 	int status = INV_IMU_OK;
 #if INV_IMU_USE_BASIC_SMD
 	edmp_apex_en1_t edmp_apex_en1;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 	edmp_apex_en1.basic_smd_en = INV_IMU_DISABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN1, 1, (uint8_t *)&edmp_apex_en1);
 #else
 	edmp_apex_en0_t edmp_apex_en0;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en0.smd_en = INV_IMU_DISABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 #endif
 	return status;
 }
 
-int inv_imu_edmp_enable_tilt(inv_imu_device_t *s)
+int inv_imu_edmp_enable_tilt(const struct device *dev , inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en0_t edmp_apex_en0;
@@ -539,26 +539,26 @@ int inv_imu_edmp_enable_tilt(inv_imu_device_t *s)
 	if (status)
 		return status;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en0.tilt_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 
 	return status;
 }
 
-int inv_imu_edmp_disable_tilt(inv_imu_device_t *s)
+int inv_imu_edmp_disable_tilt(const struct device *dev ,inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en0_t edmp_apex_en0;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en0.tilt_en = INV_IMU_DISABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 
 	return status;
 }
 
-int inv_imu_edmp_enable_r2w(inv_imu_device_t *s)
+int inv_imu_edmp_enable_r2w(const struct device *dev , inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en0_t edmp_apex_en0;
@@ -567,26 +567,26 @@ int inv_imu_edmp_enable_r2w(inv_imu_device_t *s)
 	if (status)
 		return status;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en0.r2w_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 
 	return status;
 }
 
-int inv_imu_edmp_disable_r2w(inv_imu_device_t *s)
+int inv_imu_edmp_disable_r2w(const struct device *dev, inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en0_t edmp_apex_en0;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en0.r2w_en = INV_IMU_DISABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 
 	return status;
 }
 
-int inv_imu_edmp_enable_tap(inv_imu_device_t *s)
+int inv_imu_edmp_enable_tap(const struct device *dev , inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en0_t edmp_apex_en0;
@@ -595,26 +595,26 @@ int inv_imu_edmp_enable_tap(inv_imu_device_t *s)
 	if (status)
 		return status;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en0.tap_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 
 	return status;
 }
 
-int inv_imu_edmp_disable_tap(inv_imu_device_t *s)
+int inv_imu_edmp_disable_tap(const struct device *dev , inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en0_t edmp_apex_en0;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en0.tap_en = INV_IMU_DISABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 
 	return status;
 }
 
-int inv_imu_edmp_enable_ff(inv_imu_device_t *s)
+int inv_imu_edmp_enable_ff(const struct device *dev, inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en0_t edmp_apex_en0;
@@ -624,36 +624,36 @@ int inv_imu_edmp_enable_ff(inv_imu_device_t *s)
 		return status;
 
 	/* Make sure freefall is not already enabled to prevent messing up pointers */
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	if (edmp_apex_en0.ff_en)
 		return status;
 
 	/* Enable freefall */
 	edmp_apex_en0.ff_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 
 	return status;
 }
 
-int inv_imu_edmp_disable_ff(inv_imu_device_t *s)
+int inv_imu_edmp_disable_ff(const struct device *dev , inv_imu_device_t *s)
 {
 	int             status = INV_IMU_OK;
 	edmp_apex_en0_t edmp_apex_en0;
 
-	status |= inv_imu_read_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_read_reg( dev , s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 	edmp_apex_en0.ff_en = INV_IMU_DISABLE;
-	status |= inv_imu_write_reg(s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
+	status |= inv_imu_write_reg( dev, s, EDMP_APEX_EN0, 1, (uint8_t *)&edmp_apex_en0);
 
 	return status;
 }
 
-int inv_imu_edmp_get_int_apex_status(inv_imu_device_t *s, inv_imu_edmp_int_state_t *it)
+int inv_imu_edmp_get_int_apex_status(const struct device *dev , inv_imu_device_t *s, inv_imu_edmp_int_state_t *it)
 {
 	int                status = INV_IMU_OK;
 	int_apex_statusx_t st;
 
 	/* Read APEX interrupt status */
-	status |= inv_imu_read_reg(s, INT_APEX_STATUS0, 2, (uint8_t *)&st);
+	status |= inv_imu_read_reg( dev , s, INT_APEX_STATUS0, 2, (uint8_t *)&st);
 
 	it->INV_TAP           = st.int_apex_status0.int_status_tap_det;
 	it->INV_HIGHG         = st.int_apex_status0.int_status_high_g_det;
@@ -675,7 +675,7 @@ int inv_imu_edmp_get_int_apex_status(inv_imu_device_t *s, inv_imu_edmp_int_state
 	return status;
 }
 
-int inv_imu_edmp_get_pedometer_data(inv_imu_device_t *s, inv_imu_edmp_pedometer_data_t *ped_data)
+int inv_imu_edmp_get_pedometer_data(const struct device *dev , inv_imu_device_t *s, inv_imu_edmp_pedometer_data_t *ped_data)
 {
 	int     status = INV_IMU_OK;
 	uint8_t data[2];
@@ -717,14 +717,14 @@ int inv_imu_edmp_get_pedometer_data(inv_imu_device_t *s, inv_imu_edmp_pedometer_
 	return status;
 }
 
-int inv_imu_edmp_get_ff_data(inv_imu_device_t *s, uint16_t *freefall_duration)
+int inv_imu_edmp_get_ff_data(const struct device *dev , inv_imu_device_t *s, uint16_t *freefall_duration)
 {
 	int                status = INV_IMU_OK;
 	uint8_t            data[2];
 	apex_buffer_mgmt_t apex_buffer_mgmt;
 	uint8_t            edmp_wptr, host_rptr;
 
-	status |= inv_imu_read_reg(s, APEX_BUFFER_MGMT, 1, (uint8_t *)&apex_buffer_mgmt);
+	status |= inv_imu_read_reg( dev , s, APEX_BUFFER_MGMT, 1, (uint8_t *)&apex_buffer_mgmt);
 	host_rptr = apex_buffer_mgmt.ff_duration_host_rptr;
 	edmp_wptr = apex_buffer_mgmt.ff_duration_edmp_wptr;
 
@@ -739,14 +739,14 @@ int inv_imu_edmp_get_ff_data(inv_imu_device_t *s, uint16_t *freefall_duration)
 	host_rptr = (host_rptr + 1) & 0x03;
 
 	apex_buffer_mgmt.ff_duration_host_rptr = host_rptr;
-	status |= inv_imu_write_reg(s, APEX_BUFFER_MGMT, 1, (uint8_t *)&apex_buffer_mgmt);
+	status |= inv_imu_write_reg( dev, s, APEX_BUFFER_MGMT, 1, (uint8_t *)&apex_buffer_mgmt);
 
 	*freefall_duration = (data[1] << 8) | data[0];
 
 	return status;
 }
 
-int inv_imu_edmp_get_tap_data(inv_imu_device_t *s, inv_imu_edmp_tap_data_t *data)
+int inv_imu_edmp_get_tap_data(const struct device *dev , inv_imu_device_t *s, inv_imu_edmp_tap_data_t *data)
 {
 	int status = INV_IMU_OK;
 
@@ -762,7 +762,7 @@ int inv_imu_edmp_get_tap_data(inv_imu_device_t *s, inv_imu_edmp_tap_data_t *data
 	return status;
 }
 
-int inv_imu_edmp_mask_int_src(inv_imu_device_t *s, inv_imu_edmp_int_t edmp_int_nb, uint8_t int_mask)
+int inv_imu_edmp_mask_int_src(const struct device *dev , inv_imu_device_t *s, inv_imu_edmp_int_t edmp_int_nb, uint8_t int_mask)
 {
 	int      status = INV_IMU_OK;
 	uint32_t reg_addr;
@@ -775,14 +775,14 @@ int inv_imu_edmp_mask_int_src(inv_imu_device_t *s, inv_imu_edmp_int_t edmp_int_n
 	reg_addr = STATUS_MASK_PIN_0_7 + edmp_int_nb;
 
 	/* Set bits passed in param to mask corresponding interrupts */
-	status |= inv_imu_read_reg(s, reg_addr, 1, &reg);
+	status |= inv_imu_read_reg( dev , s, reg_addr, 1, &reg);
 	reg |= int_mask;
-	status |= inv_imu_write_reg(s, reg_addr, 1, &reg);
+	status |= inv_imu_write_reg( dev, s, reg_addr, 1, &reg);
 
 	return status;
 }
 
-int inv_imu_edmp_unmask_int_src(inv_imu_device_t *s, inv_imu_edmp_int_t edmp_int_nb,
+int inv_imu_edmp_unmask_int_src(const struct device *dev , inv_imu_device_t *s, inv_imu_edmp_int_t edmp_int_nb,
                                 uint8_t int_mask)
 {
 	int      status = INV_IMU_OK;
@@ -796,14 +796,14 @@ int inv_imu_edmp_unmask_int_src(inv_imu_device_t *s, inv_imu_edmp_int_t edmp_int
 	reg_addr = STATUS_MASK_PIN_0_7 + edmp_int_nb;
 
 	/* Clear bits passed in param to unmask corresponding interrupts */
-	status |= inv_imu_read_reg(s, reg_addr, 1, &reg);
+	status |= inv_imu_read_reg( dev , s, reg_addr, 1, &reg);
 	reg &= ~(int_mask);
-	status |= inv_imu_write_reg(s, reg_addr, 1, &reg);
+	status |= inv_imu_write_reg( dev, s, reg_addr, 1, &reg);
 
 	return status;
 }
 
-int inv_imu_edmp_configure(inv_imu_device_t *s)
+int inv_imu_edmp_configure(const struct device *dev , inv_imu_device_t *s)
 {
 	int      status       = INV_IMU_OK;
 	uint16_t start_addr[] = { EDMP_ROM_START_ADDR_IRQ0, EDMP_ROM_START_ADDR_IRQ1,
@@ -813,15 +813,15 @@ int inv_imu_edmp_configure(inv_imu_device_t *s)
 
 	/* Set Start address for 3 edmp IRQ handlers */
 	status |=
-	    inv_imu_write_reg(s, EDMP_PRGRM_IRQ0_0, sizeof(start_addr), (uint8_t *)&start_addr[0]);
+	    inv_imu_write_reg( dev, s, EDMP_PRGRM_IRQ0_0, sizeof(start_addr), (uint8_t *)&start_addr[0]);
 
 	/* Set Stack pointer start address */
-	status |= inv_imu_write_reg(s, EDMP_SP_START_ADDR, sizeof(stack_addr), (uint8_t *)&stack_addr);
+	status |= inv_imu_write_reg( dev, s, EDMP_SP_START_ADDR, sizeof(stack_addr), (uint8_t *)&stack_addr);
 
 	return status;
 }
 
-int inv_imu_edmp_run_ondemand(inv_imu_device_t *s, inv_imu_edmp_int_t edmp_int_nb)
+int inv_imu_edmp_run_ondemand(const struct device *dev , inv_imu_device_t *s, inv_imu_edmp_int_t edmp_int_nb)
 {
 	int            status = INV_IMU_OK;
 	reg_host_msg_t reg_host_msg;
@@ -830,14 +830,14 @@ int inv_imu_edmp_run_ondemand(inv_imu_device_t *s, inv_imu_edmp_int_t edmp_int_n
 
 	status |= inv_imu_edmp_enable(s);
 
-	status |= inv_imu_read_reg(s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
+	status |= inv_imu_read_reg( dev , s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
 	reg_host_msg.edmp_on_demand_en = INV_IMU_ENABLE;
-	status |= inv_imu_write_reg(s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
+	status |= inv_imu_write_reg( dev, s, REG_HOST_MSG, 1, (uint8_t *)&reg_host_msg);
 
 	return status;
 }
 
-int inv_imu_edmp_wait_for_idle(inv_imu_device_t *s)
+int inv_imu_edmp_wait_for_idle(const struct device *dev , inv_imu_device_t *s)
 {
 	int          status = INV_IMU_OK;
 	ipreg_misc_t ipreg_misc;
@@ -845,7 +845,7 @@ int inv_imu_edmp_wait_for_idle(inv_imu_device_t *s)
 
 	/* Wait for idle == 1 (indicates EDMP is not running, e.g execution is completed) */
 	while (status == INV_IMU_OK) {
-		status |= inv_imu_read_reg(s, IPREG_MISC, 1, (uint8_t *)&ipreg_misc);
+		status |= inv_imu_read_reg( dev , s, IPREG_MISC, 1, (uint8_t *)&ipreg_misc);
 		if (ipreg_misc.edmp_idle != 0)
 			break;
 
