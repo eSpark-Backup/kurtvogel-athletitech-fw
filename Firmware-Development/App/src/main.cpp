@@ -3,8 +3,8 @@
 
 #include "Magnetometer.hpp"
 #include "BLEManager.hpp"
-#include "Imu.hpp"
-#include "Gnss.hpp"
+#include "GNSS.hpp"
+#include "IMU.hpp"
 
 #define MAIN_TASK_STACK_SIZE 4096
 #define MAIN_TASK_PRIORITY 1
@@ -23,7 +23,7 @@ struct k_thread gnssTaskThreadState;
 
 Magnetometer magneto;
 BLEManager ble;
-Imu imuu;
+IMU iMU;
 Gnss gps;
 
 
@@ -32,7 +32,7 @@ void mainTask(void *arg1, void *arg2, void *arg3) {
         while (1) {                        
                 ble.loop();
                 magneto.loop();
-                // imuu.loop();
+                iMU.loop();
 
                 k_msleep(1000);                        
         }
@@ -48,9 +48,10 @@ int main(void)
 {
         ble.init();
         magneto.init();
-        imuu.init();
+        iMU.init();
         gps.init();
 
+ 
 
         k_thread_create(&mainTaskThreadState, mainStackkSize,
                 MAIN_TASK_STACK_SIZE, mainTask,

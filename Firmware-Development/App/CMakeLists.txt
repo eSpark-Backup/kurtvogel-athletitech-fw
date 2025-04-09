@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20.0)
 
 
 # Append UBXLIB as a Zephyr module
-get_filename_component(UBXLIB_BASE ${CMAKE_CURRENT_LIST_DIR}/components/neoM9/ubxlib  ABSOLUTE)
+get_filename_component(UBXLIB_BASE ${CMAKE_CURRENT_LIST_DIR}/components/GNSS/ubxlib  ABSOLUTE)
 
 
 # Add ubxlib as a module
@@ -16,6 +16,6 @@ target_sources(app PRIVATE src/main.cpp)
 
 # External Modules
 add_subdirectory(components/BLE)
-add_subdirectory(components/icm45686)
-add_subdirectory(components/neoM9)
-add_subdirectory(components/tlv493)
+add_subdirectory(components/IMU)
+add_subdirectory(components/GNSS)
+add_subdirectory(components/Magnetometer)

@@ -1,9 +1,0 @@
-sample:
-  description: HTTP Example Application
-  name: http-example-app
-common:
-  build_only: true
-  integration_platforms:
-    - qemu_x86
-tests:
-  app.default: {}
