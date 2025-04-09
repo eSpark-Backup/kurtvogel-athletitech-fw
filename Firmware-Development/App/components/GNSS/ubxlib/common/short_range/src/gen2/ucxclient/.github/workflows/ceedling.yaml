@@ -1,0 +1,32 @@
+name: Ceedling Unit Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  run_tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+    - name: Install Ceedling
+      run: gem install ceedling
+    - name: Run Unit Tests
+      run: |
+        ceedling test:all
+    - name: Process Test results
+      uses: dorny/test-reporter@v1
+      if: always() # always run even if the previous step fails
+      with:
+        name: Unit Test Results
+        path: 'build/artifacts/test/report_junit.xml'
+        reporter: jest-junit
